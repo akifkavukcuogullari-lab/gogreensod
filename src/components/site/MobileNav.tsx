@@ -95,7 +95,7 @@ export function MobileNav() {
             href={BUSINESS.phoneHref}
             className="bg-accent text-accent-ink mt-8 rounded-full px-6 py-4 text-center font-semibold"
           >
-            Call {BUSINESS.phone}
+            {`Call ${BUSINESS.phone}`}
           </a>
           <a
             href={BUSINESS.emailHref}

@@ -137,8 +137,25 @@ function buildComponents(slug: (text: string) => string): PortableTextComponents
   };
 }
 
-export function PortableTextBody({ value }: { value: PortableTextBlock[] }) {
+export function PortableTextBody({
+  value,
+  slug,
+}: {
+  value: PortableTextBlock[];
+  /**
+   * A slugger shared with the rest of the page.
+   *
+   * Pass one when the page renders several bodies, or renders its own headings
+   * alongside them — otherwise each body slugs independently and two headings
+   * can end up claiming the same `id`. Omit it for a single self-contained
+   * body, such as a blog post.
+   */
+  slug?: (text: string) => string;
+}) {
   return (
-    <PortableText value={value} components={buildComponents(createSlugger())} />
+    <PortableText
+      value={value}
+      components={buildComponents(slug ?? createSlugger())}
+    />
   );
 }

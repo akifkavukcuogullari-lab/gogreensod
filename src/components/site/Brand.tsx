@@ -10,7 +10,7 @@ export function Brand({ showEst = true }: { showEst?: boolean }) {
       </span>
       {showEst && (
         <span className="text-muted text-[0.66rem] tracking-[.16em] uppercase">
-          Est. {BUSINESS.foundingDate}
+          {`Est. ${BUSINESS.foundingDate}`}
         </span>
       )}
     </Link>

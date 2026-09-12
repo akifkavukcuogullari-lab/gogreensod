@@ -111,7 +111,7 @@ export function Estimator({ varieties }: { varieties: readonly Variety[] }) {
           >
             {varieties.map((v) => (
               <option key={v.key} value={v.key}>
-                {v.name} — {centsToDollars(v.pricePerPalletCents)} / pallet
+                {`${v.name} \u2014 ${centsToDollars(v.pricePerPalletCents)} / pallet`}
               </option>
             ))}
           </select>

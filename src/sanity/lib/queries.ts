@@ -40,7 +40,11 @@ export const varietiesQuery = defineQuery(`
     highlightValue,
     description,
     image,
-    order
+    order,
+    sections[]{heading, body},
+    faq[]{question, answer},
+    seoTitle,
+    seoDescription
   }
 `);
 

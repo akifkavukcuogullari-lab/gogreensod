@@ -60,7 +60,7 @@ export default async function BlogPage() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <ButtonLink href={BUSINESS.phoneHref}>
-                Call {BUSINESS.phone}
+                {`Call ${BUSINESS.phone}`}
               </ButtonLink>
               <ButtonLink href="/varieties" variant="ghost">
                 Compare varieties

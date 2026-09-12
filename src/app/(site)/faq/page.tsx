@@ -38,7 +38,7 @@ export default function FaqPage() {
         </div>
         <div className="mt-14 flex flex-wrap gap-3">
           <ButtonLink href={BUSINESS.phoneHref}>
-            Call or text {BUSINESS.phone}
+            {`Call or text ${BUSINESS.phone}`}
           </ButtonLink>
           <ButtonLink href={BUSINESS.emailHref} variant="ghost">
             {BUSINESS.email}

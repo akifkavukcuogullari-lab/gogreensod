@@ -15,7 +15,7 @@ export function DeliveryBand() {
           usually work something out. Delivery only, no pickup at the farm.
         </p>
         <ButtonLink href={BUSINESS.phoneHref}>
-          Call or text {BUSINESS.phone}
+          {`Call or text ${BUSINESS.phone}`}
         </ButtonLink>
       </div>
     </Section>

@@ -37,6 +37,23 @@ export interface VarietyDoc {
   description: string;
   image: SanityImage | null;
   order: number;
+  sections: VarietySectionDoc[] | null;
+  faq: FaqItemDoc[] | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+}
+
+/** A headed block of long-form copy on a variety page. */
+export interface VarietySectionDoc {
+  heading: string | null;
+  body: PortableTextBlock[] | null;
+}
+
+/** One question and answer. `answer` is plain text because the same string is
+ *  rendered on the page and emitted as FAQPage JSON-LD. */
+export interface FaqItemDoc {
+  question: string | null;
+  answer: string | null;
 }
 
 export type { SanityImageSource };

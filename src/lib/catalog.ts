@@ -11,6 +11,10 @@
  * never show a missing price. See lib/catalog.server.ts for the resolver.
  */
 
+import type { PortableTextBlock } from "@portabletext/react";
+
+import type { FaqEntry } from "@/lib/faq";
+
 export const VARIETY_KEYS = ["zeon", "emerald", "meyers", "bermuda"] as const;
 
 export type VarietyKey = (typeof VARIETY_KEYS)[number];
@@ -31,6 +35,25 @@ export interface Variety {
   description: string;
   image: { src: string; alt: string; width: number; height: number };
   order: number;
+
+  /**
+   * Long-form page content, supplied only by the CMS.
+   *
+   * Optional because the compiled fallback carries none: if Sanity is
+   * unreachable the page must still render its specs, price and a working
+   * order path — it just renders shorter. Nothing in pricing or checkout
+   * reads these.
+   */
+  sections?: readonly VarietySection[];
+  faq?: readonly FaqEntry[];
+  seoTitle?: string;
+  seoDescription?: string;
+}
+
+/** A headed block of long-form copy. Renders as an anchored h2. */
+export interface VarietySection {
+  heading: string;
+  body: PortableTextBlock[];
 }
 
 /** Coverage published for every variety we carry. */

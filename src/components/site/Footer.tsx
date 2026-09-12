@@ -75,9 +75,11 @@ export function Footer() {
         </div>
 
         <div className="border-line-soft text-muted mt-14 flex flex-col gap-3 border-t pt-8 text-[0.8rem] md:flex-row md:justify-between">
+          {/* One template literal, not five children: React separates adjacent
+              nodes with a comment, which was splitting the business name and
+              city — the two facts most worth keeping cleanly extractable. */}
           <span>
-            &copy; {new Date().getFullYear()} {BUSINESS.name} &middot; Atlanta,
-            Georgia
+            {`\u00A9 ${new Date().getFullYear()} ${BUSINESS.name} \u00B7 Atlanta, Georgia`}
           </span>
           <span>
             {`Deliveries run ${BUSINESS.deliveryWindow} · ${BUSINESS.policy.minPallets} pallet minimum`}

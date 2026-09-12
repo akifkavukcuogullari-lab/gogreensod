@@ -4,6 +4,7 @@ import { urlForImage } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { varietiesQuery } from "@/sanity/lib/queries";
 import type { VarietyDoc } from "@/sanity/lib/types";
+import { createSlugger } from "@/lib/utils/slugify";
 
 import {
   FALLBACK_VARIETIES,
@@ -22,6 +23,46 @@ const BLADES: readonly Blade[] = ["Thin", "Thick", "Fine"];
 
 const asBlade = (value: string): Blade =>
   BLADES.find((b) => b === value) ?? "Thin";
+
+
+/**
+ * Long-form sections, skipping any that are incomplete.
+ *
+ * A section with a heading but no body would render an empty anchored h2 and
+ * put a hollow entry in the table of contents; one with a body but no heading
+ * has nothing to anchor. Both are dropped rather than rendered badly.
+ */
+function toSections(docs: VarietyDoc["sections"]): Variety["sections"] {
+  const sections = (docs ?? []).flatMap((d) => {
+    const heading = d?.heading?.trim();
+    const body = d?.body;
+    if (!heading || !body?.length) return [];
+    return [{ heading, body }];
+  });
+
+  return sections.length ? sections : undefined;
+}
+
+/**
+ * FAQ entries, with ids derived from the question.
+ *
+ * The Accordion keys off a stable id and Sanity array members carry no id the
+ * app should depend on, so it is slugified from the question text. The same
+ * entries feed FAQPage JSON-LD, so an incomplete pair is dropped rather than
+ * published as an empty answer.
+ */
+function toFaq(docs: VarietyDoc["faq"]): Variety["faq"] {
+  const slug = createSlugger();
+
+  const faq = (docs ?? []).flatMap((d) => {
+    const question = d?.question?.trim();
+    const answer = d?.answer?.trim();
+    if (!question || !answer) return [];
+    return [{ id: slug(question), question, answer }];
+  });
+
+  return faq.length ? faq : undefined;
+}
 
 /**
  * Maps a Sanity document onto the app's Variety.
@@ -64,6 +105,10 @@ function toVariety(doc: VarietyDoc): Variety | null {
     description: doc.description?.trim() || base.description,
     image,
     order: Number(doc.order) || base.order,
+    sections: toSections(doc.sections),
+    faq: toFaq(doc.faq),
+    seoTitle: doc.seoTitle?.trim() || undefined,
+    seoDescription: doc.seoDescription?.trim() || undefined,
   };
 }
 

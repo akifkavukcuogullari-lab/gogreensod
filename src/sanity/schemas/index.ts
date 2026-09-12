@@ -1,6 +1,8 @@
 import type { SchemaTypeDefinition } from "sanity";
 
 import { category } from "./category";
+import { contentSection } from "./objects/contentSection";
+import { faqItem } from "./objects/faqItem";
 import { post } from "./post";
 import { siteSettings } from "./siteSettings";
 import { variety } from "./variety";
@@ -10,4 +12,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   category,
   variety,
   siteSettings,
+  // Reusable objects. Not documents — they only exist inside the types above.
+  contentSection,
+  faqItem,
 ];

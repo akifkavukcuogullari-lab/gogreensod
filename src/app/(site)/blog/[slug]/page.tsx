@@ -137,7 +137,7 @@ export default async function PostPage({ params }: Params) {
             <div className="mt-7 flex flex-wrap gap-3">
               <ButtonLink href="/#estimate">Estimate my order</ButtonLink>
               <ButtonLink href={BUSINESS.phoneHref} variant="ghost">
-                Call {BUSINESS.phone}
+                {`Call ${BUSINESS.phone}`}
               </ButtonLink>
             </div>
           </aside>

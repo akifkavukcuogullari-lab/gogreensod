@@ -3,14 +3,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { PortableTextBody } from "@/components/blog/PortableTextBody";
+import { Accordion } from "@/components/ui/Accordion";
 import { ButtonLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { Section } from "@/components/ui/Section";
+import { TableOfContents } from "@/components/ui/TableOfContents";
 import { BUSINESS } from "@/lib/business";
 import { FALLBACK_VARIETIES } from "@/lib/catalog";
 import { getVarieties, getVarietyBySlug } from "@/lib/catalog.server";
 import { centsToDollars } from "@/lib/pricing";
-import { breadcrumbJsonLd, productJsonLd } from "@/lib/seo/jsonld";
+import { breadcrumbJsonLd, faqJsonLd, productJsonLd } from "@/lib/seo/jsonld";
+import { createSlugger } from "@/lib/utils/slugify";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -25,12 +29,16 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!variety) return { title: "Variety not found" };
 
   return {
-    title: variety.name,
-    description: `${variety.name} sod, ${centsToDollars(
-      variety.pricePerPalletCents,
-    )} per pallet covering ${variety.sqFtPerPallet} sq ft. Needs ${
-      variety.sunNeeded
-    } of sun. Harvested the day of delivery across Metro Atlanta.`,
+    // The client can override either in Studio; otherwise both are derived, so
+    // they can never contradict the price and specs on the page.
+    title: variety.seoTitle || variety.name,
+    description:
+      variety.seoDescription ||
+      `${variety.name} sod, ${centsToDollars(
+        variety.pricePerPalletCents,
+      )} per pallet covering ${variety.sqFtPerPallet} sq ft. Needs ${
+        variety.sunNeeded
+      } of sun. Harvested the day of delivery across Metro Atlanta.`,
     alternates: { canonical: `/varieties/${variety.slug}` },
     openGraph: {
       type: "website",
@@ -48,9 +56,18 @@ export default async function VarietyPage({ params }: Params) {
 
   const others = (await getVarieties()).filter((v) => v.key !== variety.key);
 
+  const sections = variety.sections ?? [];
+  const faq = variety.faq ?? [];
+
+  // One slugger for the whole page: section headings and any headings inside a
+  // section body draw from the same pool, so two can never claim the same id.
+  const slugFor = createSlugger();
+  const sectionIds = sections.map((section) => slugFor(section.heading));
+
   return (
     <>
       <JsonLd data={productJsonLd(variety)} />
+      {faq.length ? <JsonLd data={faqJsonLd(faq)} /> : null}
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Home", path: "/" },
@@ -112,7 +129,7 @@ export default async function VarietyPage({ params }: Params) {
             <div className="mt-10 flex flex-wrap gap-3">
               <ButtonLink href="/#estimate">Estimate my order</ButtonLink>
               <ButtonLink href={BUSINESS.phoneHref} variant="ghost">
-                Call {BUSINESS.phone}
+                {`Call ${BUSINESS.phone}`}
               </ButtonLink>
             </div>
 
@@ -122,6 +139,52 @@ export default async function VarietyPage({ params }: Params) {
           </div>
         </div>
       </Section>
+
+      {sections.length ? (
+        <Section tinted>
+          <div className="grid gap-[clamp(32px,5vw,72px)] lg:grid-cols-[minmax(0,1fr)_260px] lg:items-start">
+            <div className="min-w-0">
+              {sections.map((section, i) => (
+                <section key={sectionIds[i]} className="rv">
+                  <h2
+                    id={sectionIds[i]}
+                    className="mt-14 mb-5 max-w-[34ch] scroll-mt-28 text-[clamp(1.5rem,3vw,2.1rem)] first:mt-0"
+                  >
+                    {section.heading}
+                  </h2>
+                  <PortableTextBody value={section.body} slug={slugFor} />
+                </section>
+              ))}
+            </div>
+
+            <TableOfContents
+              className="rv lg:sticky lg:top-28"
+              title={`About ${variety.name}`}
+              entries={sections.map((section, i) => ({
+                id: sectionIds[i],
+                text: section.heading,
+                level: 2 as const,
+              }))}
+            />
+          </div>
+        </Section>
+      ) : null}
+
+      {faq.length ? (
+        <Section>
+          <div className="grid gap-[clamp(32px,5vw,72px)] lg:grid-cols-[.8fr_1.2fr]">
+            <h2
+              className="text-[clamp(2.1rem,5.2vw,3rem)]"
+              style={{ maxWidth: "14ch" }}
+            >
+              {`Questions about ${variety.name}`}
+            </h2>
+            <div className="rv">
+              <Accordion entries={faq} defaultOpenId={faq[0].id} />
+            </div>
+          </div>
+        </Section>
+      ) : null}
 
       <Section tinted>
         <h2 className="text-[clamp(1.6rem,3vw,2.2rem)]">Other varieties</h2>

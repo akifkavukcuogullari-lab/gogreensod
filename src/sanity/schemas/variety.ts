@@ -1,5 +1,5 @@
 import { SparklesIcon } from "@sanity/icons/Sparkles";
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 import { VARIETY_KEYS } from "@/lib/catalog";
 
@@ -19,8 +19,14 @@ export const variety = defineType({
   title: "Grass variety",
   type: "document",
   icon: SparklesIcon,
+  groups: [
+    { name: "specs", title: "Specs and price", default: true },
+    { name: "content", title: "Page content" },
+    { name: "seo", title: "Search" },
+  ],
   fields: [
     defineField({
+      group: "specs",
       name: "key",
       title: "Variety",
       type: "string",
@@ -33,12 +39,14 @@ export const variety = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      group: "specs",
       name: "name",
       title: "Display name",
       type: "string",
       validation: (rule) => rule.required().max(40),
     }),
     defineField({
+      group: "specs",
       name: "pricePerPallet",
       title: "Price per pallet (US dollars)",
       type: "number",
@@ -53,6 +61,7 @@ export const variety = defineType({
           .error("A pallet price must be a whole number between $50 and $2000."),
     }),
     defineField({
+      group: "specs",
       name: "sqFtPerPallet",
       title: "Coverage per pallet (square feet)",
       type: "number",
@@ -60,6 +69,7 @@ export const variety = defineType({
       validation: (rule) => rule.required().integer().min(100).max(1000),
     }),
     defineField({
+      group: "specs",
       name: "sunNeeded",
       title: "Sun needed",
       type: "string",
@@ -67,6 +77,7 @@ export const variety = defineType({
       validation: (rule) => rule.required().max(24),
     }),
     defineField({
+      group: "specs",
       name: "blade",
       title: "Blade",
       type: "string",
@@ -77,6 +88,7 @@ export const variety = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      group: "specs",
       name: "highlightLabel",
       title: "Extra spec — label",
       type: "string",
@@ -84,6 +96,7 @@ export const variety = defineType({
       validation: (rule) => rule.required().max(20),
     }),
     defineField({
+      group: "specs",
       name: "highlightValue",
       title: "Extra spec — value",
       type: "string",
@@ -91,6 +104,7 @@ export const variety = defineType({
       validation: (rule) => rule.required().max(24),
     }),
     defineField({
+      group: "specs",
       name: "description",
       title: "Description",
       type: "text",
@@ -99,6 +113,7 @@ export const variety = defineType({
       validation: (rule) => rule.required().min(40).max(400),
     }),
     defineField({
+      group: "specs",
       name: "image",
       title: "Photo",
       type: "image",
@@ -113,11 +128,49 @@ export const variety = defineType({
       ],
     }),
     defineField({
+      group: "specs",
       name: "order",
       title: "Sort order",
       type: "number",
       description: "Lower numbers appear first.",
       validation: (rule) => rule.required().integer().min(1).max(99),
+    }),
+    defineField({
+      group: "content",
+      name: "sections",
+      title: "Page sections",
+      type: "array",
+      of: [defineArrayMember({ type: "contentSection" })],
+      description:
+        "The long-form copy on this variety's page. Each section becomes a heading with its own link, and appears in the page contents. Add, reorder or remove them freely.",
+    }),
+    defineField({
+      group: "content",
+      name: "faq",
+      title: "Questions about this grass",
+      type: "array",
+      of: [defineArrayMember({ type: "faqItem" })],
+      description:
+        "Shown on this variety's page and published as structured data, so an AI assistant can quote an answer and attribute it to Go Green Sod.",
+    }),
+    defineField({
+      group: "seo",
+      name: "seoTitle",
+      title: "Search title",
+      type: "string",
+      description:
+        "Optional. Overrides the browser tab and search result title. Leave empty to use the display name.",
+      validation: (rule) => rule.max(60),
+    }),
+    defineField({
+      group: "seo",
+      name: "seoDescription",
+      title: "Search description",
+      type: "text",
+      rows: 2,
+      description:
+        "Optional. The snippet under the search result. Leave empty and one is built from the price, coverage and sun needs.",
+      validation: (rule) => rule.max(160),
     }),
   ],
   preview: {

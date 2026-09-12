@@ -1,5 +1,7 @@
 import { DocumentTextIcon } from "@sanity/icons/DocumentText";
-import { defineArrayMember, defineField, defineType } from "sanity";
+import { defineField, defineType } from "sanity";
+
+import { richTextMembers } from "./objects/richText";
 
 /**
  * A blog post.
@@ -74,56 +76,7 @@ export const post = defineType({
       name: "body",
       title: "Post",
       type: "array",
-      of: [
-        defineArrayMember({
-          type: "block",
-          styles: [
-            { title: "Normal", value: "normal" },
-            { title: "Heading", value: "h2" },
-            { title: "Subheading", value: "h3" },
-            { title: "Quote", value: "blockquote" },
-          ],
-          lists: [
-            { title: "Bulleted", value: "bullet" },
-            { title: "Numbered", value: "number" },
-          ],
-          marks: {
-            decorators: [
-              { title: "Bold", value: "strong" },
-              { title: "Italic", value: "em" },
-            ],
-            annotations: [
-              {
-                name: "link",
-                type: "object",
-                title: "Link",
-                fields: [
-                  defineField({
-                    name: "href",
-                    type: "url",
-                    title: "Address",
-                    validation: (rule) =>
-                      rule.uri({ scheme: ["http", "https", "mailto", "tel"] }),
-                  }),
-                ],
-              },
-            ],
-          },
-        }),
-        defineArrayMember({
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            defineField({
-              name: "alt",
-              title: "Describe this image",
-              type: "string",
-              validation: (rule) => rule.required().min(10),
-            }),
-            defineField({ name: "caption", title: "Caption", type: "string" }),
-          ],
-        }),
-      ],
+      of: richTextMembers,
       validation: (rule) => rule.required().min(1),
     }),
   ],
