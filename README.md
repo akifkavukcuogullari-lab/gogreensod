@@ -1,34 +1,98 @@
-# Go Green Sod — homepage concept
+# Go Green Sod
 
-A redesign concept for [gogreensod.com](https://gogreensod.com), a farm-direct
-sod supplier serving Metro Atlanta. Single static page, no build step, no
-dependencies.
+Website for [Go Green Sod](https://gogreensod.com), a farm-direct sod supplier
+serving Metro Atlanta. Next.js App Router, TypeScript, Tailwind v4.
 
-Design concept by NEXTLYN. Not affiliated with or endorsed by Go Green Sod.
+Built by NEXTLYN. Not affiliated with or endorsed by Go Green Sod.
 
 ## Run it
 
-Any static server, or open `index.html` directly:
+    pnpm install
+    pnpm dev          # http://localhost:3000
 
-    python3 -m http.server 8899
+    pnpm build        # production build
+    pnpm start        # serve the production build
+    pnpm lint
 
 ## Structure
 
-    index.html          the whole page: markup, CSS and JS
-    assets/img/         photography
-    scripts/build-artifact.py   bundles everything into one self-contained file
+    src/app/(site)/         marketing routes — nav, footer and page chrome
+    src/app/llms.txt/       plain-text brief for AI assistants
+    src/app/robots.ts       crawler policy, AI crawlers allowed explicitly
+    src/app/sitemap.ts
+    src/components/ui/      Shell, Section, Button, Accordion, Reveal, JsonLd
+    src/components/site/    Nav, MobileNav, Footer, Hero, Process, Estimator
+    src/components/varieties/
+    src/lib/                data and logic — see below
+    public/img/             photography
+    reference/index.html    the original approved single-page concept
 
-## Content
+## Single sources of truth
 
-Copy, pricing, sun requirements and FAQ answers are taken from the current
-live site. Photography is open-license placeholder imagery, not the client's
-own fields; the four turf close-ups are generic and should be reshot before
-this goes to production.
+Each of these is the only place its facts are written. The original concept
+duplicated variety data across four locations and they had already drifted;
+don't reintroduce that.
 
-## Notes
+| File | Owns |
+|---|---|
+| `src/lib/catalog.ts` | the four varieties — prices, specs, images, slugs |
+| `src/lib/pricing.ts` | pallet math, order minimum, area validation |
+| `src/lib/business.ts` | name, phone, email, address, service area, policies |
+| `src/lib/faq.ts` | FAQ copy — renders the accordion *and* the FAQPage JSON-LD |
+| `src/lib/nav.ts` | navigation — desktop nav, mobile menu and footer |
 
-- Theme is locked dark. One accent (`--accent: #8FC24A`), one radius scale.
-- Nav links are in-page anchors only. No secondary pages exist yet.
-- The pallet estimator sizes on 450 sq ft per pallet, the coverage the live
-  site publishes for Zeon Zoysia, and enforces the three pallet minimum.
-# gogreensod
+Prices are stored in **integer cents** (`pricePerPalletCents: 33000`). Never
+floating-point dollars.
+
+`src/lib/catalog.server.ts` resolves the live catalog. Sanity will supply it so
+the client can edit prices; `FALLBACK_VARIETIES` in `catalog.ts` is the
+compiled safety net for when Sanity is unreachable. Checkout re-derives every
+amount from this resolver and ignores anything a browser sends.
+
+## Changing a price
+
+Until Sanity is wired up, edit `pricePerPalletCents` in `src/lib/catalog.ts`
+and push. Vercel deploys in about a minute. The change propagates to the
+variety pages, the estimator, the comparison table, the JSON-LD and
+`/llms.txt` automatically.
+
+## Business rules encoded in the app
+
+- One pallet covers **450 sq ft**
+- **Three pallet minimum**, applied to the cart total (`meetsMinimum()`)
+- **Delivery only**, no pickup — a delivery address is required
+- Delivery window **6pm to 8am**, the night of harvest
+- Pallets can change up to **48 hours** before delivery
+- Refund requests within **two days** of purchase
+- Online estimates cap at **500,000 sq ft**
+
+## SEO and GEO
+
+The original concept shipped no structured data, no favicon, no canonical and
+no Open Graph tags. This app emits `LocalBusiness`, `Product`/`Offer` per
+variety, `FAQPage` and `BreadcrumbList` JSON-LD, all derived from the constants
+above so the markup can't contradict the page.
+
+`robots.ts` allows AI crawlers **explicitly** — `OAI-SearchBot` feeds ChatGPT's
+search results and `Google-Extended` governs Google's AI Overviews separately
+from Googlebot. A host-level firewall can still block them before robots.txt is
+read, so verify after deploy by requesting the site with each user-agent.
+
+The variety tab widget keeps all four panels in the DOM (inactive ones carry
+the `hidden` attribute) so crawlers that never run JavaScript read every
+variety.
+
+## Environment
+
+See `.env.example`. Nothing secret may carry a `NEXT_PUBLIC_` prefix — that
+inlines it into the JavaScript every visitor downloads.
+
+## Not yet built
+
+Cart, Stripe checkout, delivery-fee zones, transactional email, and the Sanity
+blog and Studio. Delivery pricing is still an open question with the client.
+
+## Legacy
+
+`render.yaml`, `scripts/build-artifact.py` and `assets/` belong to the previous
+static single-page site. They stay until DNS moves to Vercel, then go.

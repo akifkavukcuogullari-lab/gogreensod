@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Design tokens — ported 1:1 from the approved concept
+   (reference/index.html lines 20–52). Theme is locked dark.
+   ============================================================ */
+@theme {
+  --color-ink:       #0A0D08;
+  --color-surface:   #10150E;
+  --color-surface-2: #161C13;
+  --color-line:      rgba(237, 234, 224, 0.13);
+  --color-line-soft: rgba(237, 234, 224, 0.07);
+
+  --color-bone:      #EDEAE0;
+  --color-muted:     #98A18E;
+
+  --color-accent:     #8FC24A;
+  --color-accent-ink: #0A0D08;
+  --color-accent-hi:  #9ED055;
+
+  --color-danger:      #E0705F;
+  --color-placeholder: #6E7768;
+
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+
+  --font-display: var(--font-display-src), "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body:    var(--font-body-src), "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Non-color tokens Tailwind doesn't namespace */
+:root {
+  --shell: 1400px;
+  --pad: clamp(20px, 5vw, 72px);
+  color-scheme: dark;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--color-ink);
+  color: var(--color-bone);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  margin: 0;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; }
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   Scroll reveal — armed by the inline script in layout.tsx.
+   Content must be visible when JS is off or motion is reduced.
+   ============================================================ */
+.rv {
+  opacity: 1;
+  transform: none;
+}
+
+html.js .rv {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.9s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
+}
+
+html.js .rv.on {
+  opacity: 1;
+  transform: none;
+}
+
+html.js .rv-d1 { transition-delay: 0.08s; }
+html.js .rv-d2 { transition-delay: 0.16s; }
+html.js .rv-d3 { transition-delay: 0.24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html.js .rv {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================
+   Ticker marquee
+   ============================================================ */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ticker-track {
+  animation: ticker-scroll 38s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+}
