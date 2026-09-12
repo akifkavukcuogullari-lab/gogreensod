@@ -93,10 +93,21 @@ See [LAUNCH.md](LAUNCH.md) — the pre-launch checklist. It covers what is
 blocked on the client, the Vercel and Sanity cutover steps, what to verify
 once the real domain resolves, and the known gaps to disclose in writing.
 
+See [CLIENT-ACTIONS.md](CLIENT-ACTIONS.md) for the half of the work that is not
+code: the Google Business Profile, reviews, the other platforms, and the turf
+facts only the client can supply. For a local delivery business the profile and
+the reviews outrank every on-page change in this repo.
+
 ## Not yet built
 
-Cart, Stripe checkout, delivery-fee zones, transactional email, and the Sanity
-blog and Studio. Delivery pricing is still an open question with the client.
+Cart, Stripe checkout, delivery-fee zones and transactional email. Delivery
+pricing is still an open question with the client, and checkout cannot quote a
+total without it.
+
+Also outstanding from the content plan: a sod prices page, a standalone
+calculator route, contractor and comparison pages, a buying guide, and
+delivery-area pages. The area pages are deliberately last — they need the real
+fee table, and thin duplicate city pages would do more harm than good.
 
 ## Legacy
 
