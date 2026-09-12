@@ -67,5 +67,41 @@ export const BUSINESS = {
   },
 } as const;
 
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://gogreensod.com";
+/** The domain this site is canonically served from. */
+const CANONICAL_URL = "https://gogreensod.com";
+
+/**
+ * Resolves the site's base URL.
+ *
+ * Next.js inlines `process.env.NEXT_PUBLIC_*` at build time and substitutes an
+ * EMPTY STRING when the variable is unset — not `undefined`. So `??` never
+ * fires and `new URL("")` throws ERR_INVALID_URL, which is exactly how the
+ * first Vercel build failed. Treat blank and malformed values as missing.
+ */
+function resolveSiteUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    // Vercel exposes these to Next.js builds; useful on preview deployments
+    // where no explicit site URL is configured.
+    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
+    process.env.NEXT_PUBLIC_VERCEL_URL,
+  ];
+
+  for (const raw of candidates) {
+    const value = raw?.trim();
+    if (!value) continue;
+
+    // The Vercel vars are bare hostnames, with no scheme.
+    const withScheme = /^https?:\/\//.test(value) ? value : `https://${value}`;
+
+    try {
+      return new URL(withScheme).origin;
+    } catch {
+      // Malformed — fall through to the next candidate.
+    }
+  }
+
+  return CANONICAL_URL;
+}
+
+export const SITE_URL = resolveSiteUrl();

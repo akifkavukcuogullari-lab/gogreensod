@@ -28,11 +28,27 @@ const publicSchema = z.object({
 
 // Next.js inlines process.env.NEXT_PUBLIC_* only for literal member accesses,
 // so these must be written out longhand rather than spread from process.env.
+/**
+ * Blank means absent.
+ *
+ * Next.js substitutes an empty string for an unset NEXT_PUBLIC_* var, and
+ * zod's `.default()` only applies to `undefined` — so without this, a missing
+ * variable silently becomes `""` and slips past every default.
+ */
+const blankToUndefined = (v: string | undefined) =>
+  v?.trim() ? v.trim() : undefined;
+
 export const publicEnv = publicSchema.parse({
-  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
-  NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
-  NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
+  NEXT_PUBLIC_SITE_URL: blankToUndefined(process.env.NEXT_PUBLIC_SITE_URL),
+  NEXT_PUBLIC_SANITY_PROJECT_ID: blankToUndefined(
+    process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  ),
+  NEXT_PUBLIC_SANITY_DATASET: blankToUndefined(
+    process.env.NEXT_PUBLIC_SANITY_DATASET,
+  ),
+  NEXT_PUBLIC_SANITY_API_VERSION: blankToUndefined(
+    process.env.NEXT_PUBLIC_SANITY_API_VERSION,
+  ),
 });
 
 /* ------------------------------------------------------------------ *
