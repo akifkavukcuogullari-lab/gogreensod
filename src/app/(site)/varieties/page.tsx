@@ -71,7 +71,7 @@ export default async function VarietiesPage() {
                   </th>
                   <td className="text-muted py-5 pr-6">{v.sunNeeded}</td>
                   <td className="text-muted py-5 pr-6">{v.blade}</td>
-                  <td className="text-muted py-5 pr-6">{v.sqFtPerPallet} sq ft</td>
+                  <td className="text-muted py-5 pr-6">{`${v.sqFtPerPallet} sq ft`}</td>
                   <td className="text-accent py-5 pr-6 font-semibold tabular-nums">
                     {centsToDollars(v.pricePerPalletCents)}
                   </td>
@@ -82,8 +82,7 @@ export default async function VarietiesPage() {
         </div>
 
         <p className="text-muted mt-6 text-[0.85rem]">
-          Every order has a {BUSINESS.policy.minPallets} pallet minimum.
-          Delivery only, quoted separately by address.
+          {`Every order has a ${BUSINESS.policy.minPallets} pallet minimum. Delivery only, quoted separately by address.`}
         </p>
 
         <div className="mt-[clamp(48px,7vw,88px)] grid gap-8 sm:grid-cols-2">

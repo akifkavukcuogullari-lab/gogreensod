@@ -117,8 +117,7 @@ export default async function VarietyPage({ params }: Params) {
             </div>
 
             <p className="text-muted mt-6 text-[0.85rem]">
-              {BUSINESS.policy.minPallets} pallet minimum. Delivered between{" "}
-              {BUSINESS.deliveryWindow}, harvested the day it ships.
+              {`${BUSINESS.policy.minPallets} pallet minimum. Delivered between ${BUSINESS.deliveryWindow}, harvested the day it ships.`}
             </p>
           </div>
         </div>
@@ -148,8 +147,7 @@ export default async function VarietyPage({ params }: Params) {
                 </Link>
               </h3>
               <p className="text-muted mt-1 text-[0.9rem]">
-                {v.sunNeeded} sun &middot;{" "}
-                {centsToDollars(v.pricePerPalletCents)}
+                {`${v.sunNeeded} sun · ${centsToDollars(v.pricePerPalletCents)}`}
               </p>
             </article>
           ))}

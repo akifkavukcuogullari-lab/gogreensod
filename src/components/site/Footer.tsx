@@ -80,8 +80,7 @@ export function Footer() {
             Georgia
           </span>
           <span>
-            Deliveries run {BUSINESS.deliveryWindow} &middot;{" "}
-            {BUSINESS.policy.minPallets} pallet minimum
+            {`Deliveries run ${BUSINESS.deliveryWindow} · ${BUSINESS.policy.minPallets} pallet minimum`}
           </span>
           <span>Design concept by NEXTLYN</span>
         </div>
