@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Estimator } from "@/components/site/Estimator";
 import { LongFormFaq, LongFormSections } from "@/components/site/LongForm";
@@ -166,6 +167,14 @@ export default async function SodCalculatorPage() {
             Compare the grasses
           </ButtonLink>
         </div>
+        <p className="mt-6 text-[0.9rem]">
+          <Link
+            href={PAGE_META.guide.path}
+            className="text-accent underline decoration-1 underline-offset-2"
+          >
+            Not sure which grass? Read the Atlanta sod guide
+          </Link>
+        </p>
       </Section>
 
       <LongFormSections

@@ -60,6 +60,8 @@ export interface FaqItemDoc {
  *  the compiled entry in src/lib/pages.ts supplies anything missing. */
 export interface PageDoc {
   key: string;
+  _createdAt: string;
+  _updatedAt: string;
   title: string | null;
   intro: string | null;
   sections: VarietySectionDoc[] | null;

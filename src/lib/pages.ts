@@ -67,7 +67,7 @@ export const PAGE_META: Record<PageKey, PageMeta> = {
       "Go Green Sod publishes a price for every grass it grows. One pallet covers 450 square feet, every order has a three pallet minimum, and delivery is quoted separately by address. The full price list is below.",
     metaTitle: "Sod Prices in Atlanta",
     metaDescription:
-      "Current price per pallet for Zeon, Emerald and Meyers Zoysia and Tifway 419 Bermuda. One pallet covers 450 sq ft, three pallet minimum, delivered across Metro Atlanta.",
+      "Price per pallet for Zeon, Emerald and Meyers Zoysia and Tifway 419 Bermuda. One pallet covers 450 sq ft, three pallet minimum, Metro Atlanta delivery.",
   },
   calculator: {
     key: "calculator",
@@ -89,7 +89,7 @@ export const PAGE_META: Record<PageKey, PageMeta> = {
       "Go Green Sod supplies turf to landscaping crews across Metro Atlanta. We grow and deliver; we do not install, so we are never bidding against you on the job. Pallets are cut the day they ship and delivered overnight, so they are on site before your crew arrives.",
     metaTitle: "Sod for Landscapers and Contractors",
     metaDescription:
-      "Farm-direct sod supply for Metro Atlanta landscaping contractors. Cut to order, delivered overnight, and we do not install — so we never compete with you on the job.",
+      "Farm-direct sod for Metro Atlanta landscapers. Cut to order, delivered overnight, and we never install — so we never compete with you on the job.",
   },
   "zoysia-vs-bermuda": {
     key: "zoysia-vs-bermuda",
@@ -100,7 +100,7 @@ export const PAGE_META: Record<PageKey, PageMeta> = {
       "How much sun the spot gets decides it. Tifway 419 Bermuda wants a full eight hours of direct sun a day, while the zoysias Go Green Sod grows manage on as little as three to four. All four grasses are compared below.",
     metaTitle: "Zoysia vs Bermuda in Atlanta",
     metaDescription:
-      "Bermuda needs eight hours of sun a day; zoysia manages on three to four. Compare sun, blade, coverage and price per pallet for the four grasses Go Green Sod delivers in Metro Atlanta.",
+      "Bermuda needs eight hours of sun a day; zoysia manages on three to four. Compare sun, blade, coverage and price for four grasses delivered in Metro Atlanta.",
   },
   "zeon-vs-emerald": {
     key: "zeon-vs-emerald",
@@ -111,7 +111,7 @@ export const PAGE_META: Record<PageKey, PageMeta> = {
       "Both are thin-bladed zoysias, and they are the two most shade tolerant grasses Go Green Sod grows. Zeon Zoysia takes the deeper shade, holding up on three to four hours of direct sun against four to five for Emerald Zoysia. Emerald Zoysia is very drought tolerant.",
     metaTitle: "Zeon vs Emerald Zoysia",
     metaDescription:
-      "Zeon Zoysia takes deeper shade at three to four hours of sun; Emerald Zoysia wants four to five and is very drought tolerant. Compare blade, coverage and price per pallet.",
+      "Zeon Zoysia takes deeper shade, on three to four hours of sun; Emerald wants four to five and is very drought tolerant. Compare blade, coverage and price.",
   },
 };
 
@@ -158,4 +158,7 @@ export interface EditorialPage extends PageMeta {
   /** Optional CMS overrides for the metadata. */
   seoTitle?: string;
   seoDescription?: string;
+  /** The CMS document's own timestamps. Absent when there is no document. */
+  createdAt?: string;
+  updatedAt?: string;
 }

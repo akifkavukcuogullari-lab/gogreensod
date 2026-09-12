@@ -65,6 +65,8 @@ export const siteSettingsQuery = defineQuery(`
 export const pagesQuery = defineQuery(`
   *[_type == "page" && defined(key)] {
     key,
+    _createdAt,
+    _updatedAt,
     title,
     intro,
     sections[]{heading, body},

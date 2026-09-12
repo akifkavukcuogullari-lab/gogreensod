@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { CtaBand } from "@/components/site/CtaBand";
 import { DeliveryBand } from "@/components/site/DeliveryBand";
 import { Estimator } from "@/components/site/Estimator";
@@ -10,6 +12,7 @@ import { Section, SectionHead } from "@/components/ui/Section";
 import { VarietyTabs } from "@/components/varieties/VarietyTabs";
 import { getVarieties } from "@/lib/catalog.server";
 import { FAQ } from "@/lib/faq";
+import { PAGE_META } from "@/lib/pages";
 import { faqJsonLd, localBusinessJsonLd } from "@/lib/seo/jsonld";
 
 /**
@@ -62,6 +65,17 @@ export default async function HomePage() {
             <h2 className="text-[clamp(2.1rem,5.2vw,4rem)]" style={{ maxWidth: "12ch" }}>
               Before you order
             </h2>
+            {/* The home page is the most-linked page on any site; pointing it at
+                the guide gives the hub a real in-content inbound link rather
+                than only a footer mention. */}
+            <p className="mt-6 text-[0.95rem]">
+              <Link
+                href={PAGE_META.guide.path}
+                className="text-accent underline decoration-1 underline-offset-2"
+              >
+                Read the complete Atlanta sod guide
+              </Link>
+            </p>
           </div>
           <div className="rv rv-d1">
             <Accordion entries={FAQ} defaultOpenId={FAQ[0].id} />

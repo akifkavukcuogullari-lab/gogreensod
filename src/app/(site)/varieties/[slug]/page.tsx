@@ -68,8 +68,10 @@ export default async function VarietyPage({ params }: Params) {
     .filter(([, c]) => c.varieties.includes(variety.key))
     .map(([compareSlug, c]) => ({
       href: `/compare/${compareSlug}`,
-      label: PAGE_META[c.pageKey].breadcrumb,
-    }));
+      label: `Compare: ${PAGE_META[c.pageKey].breadcrumb}`,
+    }))
+    // The guide is the hub; every variety page points back into it.
+    .concat({ href: PAGE_META.guide.path, label: "Atlanta sod guide" });
 
   return (
     <>
@@ -152,7 +154,7 @@ export default async function VarietyPage({ params }: Params) {
                       href={c.href}
                       className="text-accent underline decoration-1 underline-offset-2"
                     >
-                      {`Compare: ${c.label}`}
+                      {c.label}
                     </Link>
                   </li>
                 ))}

@@ -37,6 +37,8 @@ function toPage(doc: PageDoc): EditorialPage | null {
     faq: toFaq(doc.faq),
     seoTitle: doc.seoTitle?.trim() || undefined,
     seoDescription: doc.seoDescription?.trim() || undefined,
+    createdAt: doc._createdAt,
+    updatedAt: doc._updatedAt,
   };
 }
 

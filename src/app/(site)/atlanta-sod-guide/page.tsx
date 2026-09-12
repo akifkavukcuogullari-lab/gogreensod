@@ -122,6 +122,8 @@ export default async function AtlantaSodGuidePage() {
           headline: page.title,
           description: META.metaDescription,
           path: META.path,
+          datePublished: page.createdAt,
+          dateModified: page.updatedAt,
         })}
       />
       <JsonLd data={faqJsonLd(faq)} />

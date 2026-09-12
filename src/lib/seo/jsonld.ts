@@ -14,6 +14,22 @@ import type { Variety } from "@/lib/catalog";
 
 const ORG_ID = `${SITE_URL}/#business`;
 
+/**
+ * One stable id per variety's Product node, declared on its own page. Lists
+ * elsewhere reference it instead of re-declaring a thinner Product, which Google
+ * would otherwise validate as a Product missing its offers.
+ */
+const productId = (v: Variety) => `${SITE_URL}/varieties/${v.slug}#product`;
+
+/**
+ * Image URLs arrive in two shapes: compiled fallbacks are site-relative
+ * ("/img/v-zeon.jpg") while Sanity images are already absolute CDN URLs.
+ * Prefixing blindly would produce "https://gogreensod.comhttps://cdn.sanity.io/…"
+ * the moment the client uploads a real photo.
+ */
+const absoluteUrl = (src: string) =>
+  /^https?:\/\//.test(src) ? src : `${SITE_URL}${src}`;
+
 export function localBusinessJsonLd(varieties: readonly Variety[]) {
   const { address } = BUSINESS;
 
@@ -59,9 +75,16 @@ export function localBusinessJsonLd(varieties: readonly Variety[]) {
       name: "Turf grass varieties",
       itemListElement: varieties.map((v) => ({
         "@type": "Offer",
-        itemOffered: { "@type": "Product", name: v.name },
+        // A reference to the full Product on the variety page, not a bare
+        // name-only Product that would fail validation for lacking offers.
+        itemOffered: {
+          "@id": productId(v),
+          name: v.name,
+          url: `${SITE_URL}/varieties/${v.slug}`,
+        },
         price: (v.pricePerPalletCents / 100).toFixed(2),
         priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
       })),
     },
   };
@@ -71,9 +94,11 @@ export function productJsonLd(variety: Variety) {
   return {
     "@context": "https://schema.org",
     "@type": "Product",
+    "@id": productId(variety),
     name: variety.name,
+    url: `${SITE_URL}/varieties/${variety.slug}`,
     description: variety.description,
-    image: `${SITE_URL}${variety.image.src}`,
+    image: absoluteUrl(variety.image.src),
     category: "Turf grass sod",
     brand: { "@type": "Brand", name: BUSINESS.name },
     additionalProperty: [
@@ -164,8 +189,11 @@ export function priceListJsonLd(
       position: i + 1,
       item: {
         "@type": "Product",
+        "@id": productId(v),
         name: v.name,
         url: `${SITE_URL}/varieties/${v.slug}`,
+        description: v.description,
+        image: absoluteUrl(v.image.src),
         category: "Turf grass sod",
         brand: { "@type": "Brand", name: BUSINESS.name },
         offers: {
@@ -256,18 +284,23 @@ export function calculatorJsonLd({
  * The buying guide as an Article.
  *
  * Author and publisher both point at the business node declared on the home
- * page, so the guide is attributed to Go Green Sod as one entity. There is no
- * datePublished or dateModified: nothing reliable supplies them yet, and an
- * invented date is worse than an absent one on a page built to be cited.
+ * page, so the guide is attributed to Go Green Sod as one entity. Dates come
+ * from the Sanity document's own _createdAt and _updatedAt — real timestamps of
+ * when the copy was written and last edited. With no CMS document they are
+ * omitted rather than invented.
  */
 export function guideArticleJsonLd({
   headline,
   description,
   path,
+  datePublished,
+  dateModified,
 }: {
   headline: string;
   description: string;
   path: string;
+  datePublished?: string;
+  dateModified?: string;
 }) {
   return {
     "@context": "https://schema.org",
@@ -277,6 +310,9 @@ export function guideArticleJsonLd({
     url: `${SITE_URL}${path}`,
     mainEntityOfPage: `${SITE_URL}${path}`,
     inLanguage: "en-US",
+    image: `${SITE_URL}/img/hero-lay.jpg`,
+    ...(datePublished ? { datePublished } : {}),
+    ...(dateModified ? { dateModified } : {}),
     author: { "@id": ORG_ID },
     publisher: { "@id": ORG_ID },
     about: { "@type": "Thing", name: "Buying sod in Metro Atlanta" },

@@ -219,6 +219,14 @@ export default async function ComparisonPage({ params }: Params) {
               </Link>
             </li>
           ))}
+          <li>
+            <Link
+              href={PAGE_META.guide.path}
+              className="text-accent underline decoration-1 underline-offset-2"
+            >
+              Read the Atlanta sod guide
+            </Link>
+          </li>
         </ul>
       </Section>
 

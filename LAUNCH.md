@@ -43,6 +43,33 @@ Nothing below can finish without these, and they move slower than the code.
 
 ## 1. Vercel
 
+- [ ] **Two Vercel projects are deploying this repo — delete one.** Found
+      2026-09-12 from GitHub commit statuses:
+      - `gogreensod-k6oy` — **builds successfully** on every commit since
+        `e43c21b`. This is the working one.
+      - `gogreensod` — **has failed on every commit since `19be758`** (the Sanity
+        commit), before any of the SEO/content work.
+
+      Likely cause, *not verified* (its build log is outside what the Vercel
+      connector can read): that project never got the Sanity environment
+      variables below, and `19be758` is the commit that started requiring them.
+      Either way, two projects on one repo means double builds and a permanently
+      red commit status. Keep the working project, attach the domain to it, and
+      delete the other. Check that the one you keep is the one with the env vars.
+- [ ] **Know which URL is public.** The working project's Production alias is
+      **https://gogreensod-k6oy-ten.vercel.app** — public, serving the latest
+      `main`, and correctly `noindex, nofollow` with canonicals and the sitemap
+      pointing at gogreensod.com. The per-deployment URLs
+      (`gogreensod-k6oy-<hash>-…vercel.app`) are behind Vercel Deployment
+      Protection and answer 302 to a login, so use the alias for any external
+      test. At cutover, confirm protection stays **off** for Production on the
+      real domain.
+- [x] **AI crawlers are not blocked by Vercel's firewall** — verified
+      2026-09-12 against the Production alias. OAI-SearchBot, GPTBot,
+      ChatGPT-User, PerplexityBot, ClaudeBot, Googlebot, bingbot and Applebot
+      all received 200 with the full HTML, fact sentences included. Re-run the
+      §5 check once on the real domain, since firewall rules can differ per
+      domain.
 - [ ] **Upgrade to Pro.** Vercel's Hobby plan is restricted to
       non-commercial personal use; taking payments and being paid to build
       the site both count as commercial. ~$20/month, the client's operating
@@ -134,12 +161,30 @@ localhost:3000 and the preview host. Nothing to do there.
       curl -A "OAI-SearchBot/1.0" https://gogreensod.com/varieties -o /dev/null -w "%{http_code} %{size_download}\n"
 
       Repeat for GPTBot, PerplexityBot, ClaudeBot, Googlebot, bingbot.
-- [ ] Google Rich Results Test passes for LocalBusiness, Product, FAQPage and
-      BlogPosting.
+- [ ] Google Rich Results Test passes for LocalBusiness, Product, FAQPage,
+      BlogPosting, Article, ItemList, Service and BreadcrumbList. Test at least
+      `/`, a variety page, `/sod-prices-atlanta`, a `/compare/…` page and
+      `/atlanta-sod-guide`. Every required and recommended property was checked
+      locally on 2026-09-12 with no gaps; this is the confirmation against Google
+      itself, which needs a publicly reachable URL.
 - [ ] Lighthouse ≥95 on the home page and a blog post.
 - [ ] Submit the sitemap in Google Search Console.
 - [ ] Studio loads at /studio and the client can log in and publish.
 - [ ] Check the site on a real phone, not just a narrow browser window.
+
+---
+
+## Verifying a CMS edit locally
+
+`pnpm build` alone does **not** show a change just made in Studio. The fetch
+cache in `.next/cache` survives rebuilds for the 60-second revalidate window, so
+a rebuild can serve the previous price and look like the edit failed. Clear it
+first:
+
+    rm -rf .next/cache && pnpm build
+
+In production this does not arise — the revalidate webhook invalidates the cache
+tag on publish.
 
 ---
 
