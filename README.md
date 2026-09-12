@@ -104,10 +104,9 @@ Cart, Stripe checkout, delivery-fee zones and transactional email. Delivery
 pricing is still an open question with the client, and checkout cannot quote a
 total without it.
 
-Also outstanding from the content plan: a sod prices page, a standalone
-calculator route, contractor and comparison pages, a buying guide, and
-delivery-area pages. The area pages are deliberately last — they need the real
-fee table, and thin duplicate city pages would do more harm than good.
+Also outstanding from the content plan: delivery-area (city) pages. They are
+deliberately last — they need the real fee table, and thin duplicate city pages
+would do more harm than good.
 
 ## Legacy
 

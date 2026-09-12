@@ -149,11 +149,15 @@ export const priceLabel = (v: Variety) =>
  * this is the machine-readable form of that answer. Prices come from the
  * resolver, so they cannot disagree with the table rendered beside them.
  */
-export function priceListJsonLd(varieties: readonly Variety[]) {
+export function priceListJsonLd(
+  varieties: readonly Variety[],
+  /** Describes the list; comparison pages pass their own. */
+  name = `Sod prices — ${BUSINESS.name}, Metro Atlanta`,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `Sod prices — ${BUSINESS.name}, Metro Atlanta`,
+    name,
     numberOfItems: varieties.length,
     itemListElement: varieties.map((v, i) => ({
       "@type": "ListItem",
@@ -245,5 +249,36 @@ export function calculatorJsonLd({
     browserRequirements: "Requires JavaScript",
     isAccessibleForFree: true,
     provider: { "@id": ORG_ID },
+  };
+}
+
+/**
+ * The buying guide as an Article.
+ *
+ * Author and publisher both point at the business node declared on the home
+ * page, so the guide is attributed to Go Green Sod as one entity. There is no
+ * datePublished or dateModified: nothing reliable supplies them yet, and an
+ * invented date is worse than an absent one on a page built to be cited.
+ */
+export function guideArticleJsonLd({
+  headline,
+  description,
+  path,
+}: {
+  headline: string;
+  description: string;
+  path: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline,
+    description,
+    url: `${SITE_URL}${path}`,
+    mainEntityOfPage: `${SITE_URL}${path}`,
+    inLanguage: "en-US",
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    about: { "@type": "Thing", name: "Buying sod in Metro Atlanta" },
   };
 }

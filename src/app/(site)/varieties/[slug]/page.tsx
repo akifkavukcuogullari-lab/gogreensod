@@ -11,6 +11,7 @@ import { BUSINESS } from "@/lib/business";
 import { FALLBACK_VARIETIES } from "@/lib/catalog";
 import { getVarieties, getVarietyBySlug } from "@/lib/catalog.server";
 import { centsToDollars } from "@/lib/pricing";
+import { COMPARISONS, PAGE_META } from "@/lib/pages";
 import { breadcrumbJsonLd, faqJsonLd, productJsonLd } from "@/lib/seo/jsonld";
 import { createSlugger } from "@/lib/utils/slugify";
 
@@ -60,6 +61,15 @@ export default async function VarietyPage({ params }: Params) {
   // One slugger for the whole page: section headings and any headings inside a
   // section body draw from the same pool, so two can never claim the same id.
   const slugFor = createSlugger();
+
+  // Every comparison this variety appears in, straight from the registry, so a
+  // new comparison links itself from the right variety pages automatically.
+  const compareLinks = Object.entries(COMPARISONS)
+    .filter(([, c]) => c.varieties.includes(variety.key))
+    .map(([compareSlug, c]) => ({
+      href: `/compare/${compareSlug}`,
+      label: PAGE_META[c.pageKey].breadcrumb,
+    }));
 
   return (
     <>
@@ -133,6 +143,21 @@ export default async function VarietyPage({ params }: Params) {
             <p className="text-muted mt-6 text-[0.85rem]">
               {`${BUSINESS.policy.minPallets} pallet minimum. Delivered between ${BUSINESS.deliveryWindow}, harvested the day it ships.`}
             </p>
+
+            {compareLinks.length ? (
+              <ul className="text-muted mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[0.85rem]">
+                {compareLinks.map((c) => (
+                  <li key={c.href}>
+                    <Link
+                      href={c.href}
+                      className="text-accent underline decoration-1 underline-offset-2"
+                    >
+                      {`Compare: ${c.label}`}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         </div>
       </Section>

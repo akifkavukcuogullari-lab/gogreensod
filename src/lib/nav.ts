@@ -21,6 +21,7 @@ export const NAV_LINKS: readonly NavLink[] = [
  * page is aimed at a reader who arrives by search, not by browsing.
  */
 export const FOOTER_LINKS: readonly NavLink[] = [
+  { href: "/atlanta-sod-guide", label: "Atlanta sod guide" },
   { href: "/contractor-sod-delivery-atlanta", label: "For contractors" },
   { href: "/#process", label: "How it works" },
 ] as const;

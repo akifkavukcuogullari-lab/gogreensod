@@ -38,8 +38,17 @@ export const richTextMembers = [
               name: "href",
               type: "url",
               title: "Address",
+              description:
+                "A page on this site starts with a slash, like /sod-calculator. Anything else needs the full address, like https://…",
+              // allowRelative: without it, Sanity rejects "/sod-calculator" as an
+              // invalid URL, so the client could not link to his own pages at all.
+              // PortableTextBody already renders slash-prefixed hrefs as internal
+              // next/link navigation.
               validation: (rule) =>
-                rule.uri({ scheme: ["http", "https", "mailto", "tel"] }),
+                rule.uri({
+                  scheme: ["http", "https", "mailto", "tel"],
+                  allowRelative: true,
+                }),
             }),
           ],
         },

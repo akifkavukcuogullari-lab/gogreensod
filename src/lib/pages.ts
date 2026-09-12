@@ -12,9 +12,16 @@
  */
 
 import type { FaqEntry } from "@/lib/faq";
-import type { VarietySection } from "@/lib/catalog";
+import type { VarietyKey, VarietySection } from "@/lib/catalog";
 
-export const PAGE_KEYS = ["prices", "calculator", "contractors"] as const;
+export const PAGE_KEYS = [
+  "guide",
+  "prices",
+  "calculator",
+  "contractors",
+  "zoysia-vs-bermuda",
+  "zeon-vs-emerald",
+] as const;
 
 export type PageKey = (typeof PAGE_KEYS)[number];
 
@@ -40,6 +47,17 @@ export interface PageMeta {
  * from the catalog at render time instead.
  */
 export const PAGE_META: Record<PageKey, PageMeta> = {
+  guide: {
+    key: "guide",
+    path: "/atlanta-sod-guide",
+    breadcrumb: "Atlanta sod guide",
+    title: "The complete guide to buying sod in Atlanta",
+    intro:
+      "Everything worth knowing before you order sod in Metro Atlanta: which grass suits your yard, how much you need, what it costs, and how farm-direct delivery works. Written by Go Green Sod, which has grown and delivered turf here since 2011.",
+    metaTitle: "The Complete Guide to Buying Sod in Atlanta",
+    metaDescription:
+      "Which grass suits an Atlanta yard, how many pallets you need, what sod costs per pallet, and how overnight farm-direct delivery works across Metro Atlanta.",
+  },
   prices: {
     key: "prices",
     path: "/sod-prices-atlanta",
@@ -73,7 +91,54 @@ export const PAGE_META: Record<PageKey, PageMeta> = {
     metaDescription:
       "Farm-direct sod supply for Metro Atlanta landscaping contractors. Cut to order, delivered overnight, and we do not install — so we never compete with you on the job.",
   },
+  "zoysia-vs-bermuda": {
+    key: "zoysia-vs-bermuda",
+    path: "/compare/zoysia-vs-bermuda",
+    breadcrumb: "Zoysia vs bermuda",
+    title: "Zoysia or bermuda for an Atlanta lawn?",
+    intro:
+      "How much sun the spot gets decides it. Tifway 419 Bermuda wants a full eight hours of direct sun a day, while the zoysias Go Green Sod grows manage on as little as three to four. All four grasses are compared below.",
+    metaTitle: "Zoysia vs Bermuda in Atlanta",
+    metaDescription:
+      "Bermuda needs eight hours of sun a day; zoysia manages on three to four. Compare sun, blade, coverage and price per pallet for the four grasses Go Green Sod delivers in Metro Atlanta.",
+  },
+  "zeon-vs-emerald": {
+    key: "zeon-vs-emerald",
+    path: "/compare/zeon-vs-emerald-zoysia",
+    breadcrumb: "Zeon vs Emerald",
+    title: "Zeon or Emerald Zoysia?",
+    intro:
+      "Both are thin-bladed zoysias, and they are the two most shade tolerant grasses Go Green Sod grows. Zeon Zoysia takes the deeper shade, holding up on three to four hours of direct sun against four to five for Emerald Zoysia. Emerald Zoysia is very drought tolerant.",
+    metaTitle: "Zeon vs Emerald Zoysia",
+    metaDescription:
+      "Zeon Zoysia takes deeper shade at three to four hours of sun; Emerald Zoysia wants four to five and is very drought tolerant. Compare blade, coverage and price per pallet.",
+  },
 };
+
+/**
+ * Comparisons, keyed by their URL segment under /compare.
+ *
+ * One dynamic route renders every entry, so adding a comparison is an entry here
+ * plus a page key rather than another near-identical page file. `varieties` sets
+ * which rows the table shows, in order.
+ */
+export const COMPARISONS: Record<
+  string,
+  { pageKey: PageKey; varieties: readonly VarietyKey[] }
+> = {
+  "zoysia-vs-bermuda": {
+    pageKey: "zoysia-vs-bermuda",
+    // All four, not a pair: the catalog is three zoysias and one bermuda, so
+    // picking one zoysia to stand for all of them would misrepresent the choice.
+    varieties: ["zeon", "emerald", "meyers", "bermuda"],
+  },
+  "zeon-vs-emerald-zoysia": {
+    pageKey: "zeon-vs-emerald",
+    varieties: ["zeon", "emerald"],
+  },
+};
+
+export const COMPARISON_SLUGS = Object.keys(COMPARISONS);
 
 export const PAGE_LIST: readonly PageMeta[] = PAGE_KEYS.map(
   (key) => PAGE_META[key],
