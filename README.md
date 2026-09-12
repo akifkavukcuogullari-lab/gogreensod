@@ -100,9 +100,13 @@ the reviews outrank every on-page change in this repo.
 
 ## Not yet built
 
-Cart, Stripe checkout, delivery-fee zones and transactional email. Delivery
-pricing is still an open question with the client, and checkout cannot quote a
-total without it.
+Order emails (customer confirmation and new-order alert). Sending from
+gogreensod.com needs DNS access the client has not provided.
+
+Cart, Stripe checkout, ZIP-based delivery fees and the order webhook **are**
+built, and switch on from environment variables — see `.env.example` and
+LAUNCH.md §3. The delivery zones in Site settings are placeholders named
+"TEST…" until the client supplies real fees.
 
 Also outstanding from the content plan: delivery-area (city) pages. They are
 deliberately last — they need the real fee table, and thin duplicate city pages

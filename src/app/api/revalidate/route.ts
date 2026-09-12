@@ -4,6 +4,7 @@ import { parseBody } from "next-sanity/webhook";
 
 import { CATALOG_TAG } from "@/lib/catalog.server";
 import { PAGES_TAG } from "@/lib/pages.server";
+import { SETTINGS_TAG } from "@/lib/settings.server";
 import { POSTS_TAG, postTag } from "@/lib/blog.server";
 
 /**
@@ -34,7 +35,7 @@ function tagsFor(type: string, slug?: string): string[] {
     case "page":
       return [PAGES_TAG];
     case "siteSettings":
-      return ["settings"];
+      return [SETTINGS_TAG];
     default:
       return [];
   }

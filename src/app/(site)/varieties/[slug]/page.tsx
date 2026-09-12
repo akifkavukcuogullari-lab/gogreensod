@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AddToCart } from "@/components/cart/AddToCart";
 import { LongFormFaq, LongFormSections } from "@/components/site/LongForm";
 import { ButtonLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/ui/JsonLd";
@@ -135,15 +136,23 @@ export default async function VarietyPage({ params }: Params) {
               />
             </dl>
 
-            <div className="mt-10 flex flex-wrap gap-3">
-              <ButtonLink href="/sod-calculator">Estimate my order</ButtonLink>
+            <AddToCart
+              className="mt-10"
+              varietyKey={variety.key}
+              name={variety.name}
+            />
+
+            <div className="mt-4 flex flex-wrap gap-3">
+              <ButtonLink href="/sod-calculator" variant="ghost">
+                Work out how many pallets
+              </ButtonLink>
               <ButtonLink href={BUSINESS.phoneHref} variant="ghost">
                 {`Call ${BUSINESS.phone}`}
               </ButtonLink>
             </div>
 
             <p className="text-muted mt-6 text-[0.85rem]">
-              {`${BUSINESS.policy.minPallets} pallet minimum. Delivered between ${BUSINESS.deliveryWindow}, harvested the day it ships.`}
+              {`${BUSINESS.policy.minPallets} pallet minimum. Delivered from ${BUSINESS.deliveryWindow}, harvested the day it ships.`}
             </p>
 
             {compareLinks.length ? (

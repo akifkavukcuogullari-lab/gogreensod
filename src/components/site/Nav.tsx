@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { CartBadge } from "@/components/cart/CartBadge";
+
 import { ButtonLink } from "@/components/ui/Button";
 import { BUSINESS } from "@/lib/business";
 import { NAV_LINKS } from "@/lib/nav";
@@ -29,6 +31,7 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <CartBadge />
           {/* Visibility lives on a wrapper: ButtonLink's base classes already
               set `inline-flex`, and Tailwind resolves conflicting display
               utilities by stylesheet order rather than class order. */}

@@ -4,7 +4,8 @@ Everything that must be true before DNS points at this site. Work top to
 bottom; the blockers gate the rest.
 
 **Status:** Release 1 (site + CMS + blog) is built and deployed to a preview
-host. Release 2 (cart + Stripe + email) is not built. The site is currently
+host. Cart, Stripe checkout and order recording are built and switch on from
+environment variables; order emails are not built yet. The site is currently
 `noindex` on every host except gogreensod.com, so nothing is public yet.
 
 ---
@@ -122,18 +123,48 @@ localhost:3000 and the preview host. Nothing to do there.
 
 ---
 
-## 3. Stripe — only once Release 2 is built
+## 3. Stripe
 
-- [ ] Live secret key set in Production only; test keys everywhere else.
-- [ ] Use a **restricted API key** in production, scoped to creating Checkout
-      Sessions and reading line items, so a leak cannot drain the balance.
-- [ ] Webhook endpoint created, signing secret stored, signature verified.
-- [ ] Refuse to enable live keys while the delivery zone table is empty —
-      `src/lib/env.ts` should assert this.
-- [ ] **Place one real order with a real card, then refund it.** Confirm the
-      money moves, both emails arrive, and the refund lands.
-- [ ] Confirm the 3-pallet minimum blocks checkout, and an out-of-area ZIP
-      returns the "call for a quote" message rather than a guessed fee.
+Cart, checkout and the order webhook are built. **Everything switches on from
+environment variables** — when the client's credentials arrive, set them in
+Vercel → Settings → Environment Variables and redeploy. No code changes.
+
+| Variable | Production | Preview / Development | Without it |
+|---|---|---|---|
+| `STRIPE_SECRET_KEY` | `rk_live_…` restricted key | `sk_test_…` | Cart works; checkout shows "call to order" |
+| `STRIPE_WEBHOOK_SECRET` | secret of the **live** endpoint | secret of the **test** endpoint | Payments work; orders not recorded in Studio |
+| `SANITY_API_WRITE_TOKEN` | Editor token | same token | Orders visible in Stripe only |
+
+- [ ] **Stripe account in the client's name** (§0) — keys come from his account.
+- [ ] **Restricted key permissions:** Checkout Sessions → Write. Nothing else is
+      called, so a leaked key cannot refund, pay out or read customers.
+- [ ] **Webhook endpoint** — Stripe → Developers → Webhooks → Add endpoint:
+      `https://gogreensod.com/api/stripe/webhook`, events
+      `checkout.session.completed` and `checkout.session.async_payment_succeeded`.
+      Copy its signing secret into `STRIPE_WEBHOOK_SECRET`.
+- [ ] **A separate endpoint per mode.** Test mode points at the public alias
+      (`https://gogreensod-k6oy-ten.vercel.app/api/stripe/webhook`), live mode at
+      the real domain. Each has its own secret. Never point a webhook at a
+      per-deployment URL — Deployment Protection rejects Stripe before the
+      handler runs.
+- [ ] **Sanity Editor token** for `SANITY_API_WRITE_TOKEN`, so paid orders show
+      in Studio → Orders, soonest delivery first.
+- [ ] **Replace the TEST delivery zones** in Studio → Site settings → Delivery
+      with the real fee table. Checkout refuses a live key while an order is
+      priced by a zone named "TEST…", and every such order is flagged in Studio.
+- [ ] **Turn on customer receipts:** Stripe → Settings → Customer emails →
+      Successful payments. Stripe sends no receipts in test mode.
+- [ ] **Sales tax is still not collected** — the §0 blocker stands.
+- [ ] Place one real order with a real card. Confirm it appears in Studio →
+      Orders, refund it in Stripe, then set its status to Cancelled.
+- [ ] Confirm the 3-pallet minimum blocks checkout and an out-of-zone ZIP shows
+      "call for a quote".
+
+**Testing locally with test keys:** set `STRIPE_SECRET_KEY=sk_test_…` in
+`.env.local`, install the Stripe CLI, run
+`stripe listen --forward-to localhost:3000/api/stripe/webhook`, and copy the
+`whsec_…` it prints into `STRIPE_WEBHOOK_SECRET`. Pay with card
+`4242 4242 4242 4242`, any future expiry, any CVC.
 
 ---
 
@@ -197,9 +228,11 @@ than to explain in week three.
       booked for the same night across separate orders. This is the gap most
       likely to hurt operationally. A `deliveryCapacity` document in Sanity is
       the natural v1.1.
-- [ ] **No order list outside Stripe.** The Stripe Dashboard is the order
-      book. There is no admin page, no delivery calendar, and no customer
-      lookup by address.
+- [ ] **Orders live in Stripe, with a copy in Studio.** Once
+      `SANITY_API_WRITE_TOKEN` is set, each paid order appears in Studio →
+      Orders, sorted by delivery date, with a status he can update. There is
+      still no calendar view, no daily capacity limit, and refunds are done in
+      the Stripe Dashboard, not in Studio.
 - [ ] **Stripe is not a CRM.** No notes on a customer, no follow-up
       reminders, no tags, no segments.
 - [ ] **Repeat customers may create duplicate Stripe records** unless

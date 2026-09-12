@@ -70,4 +70,20 @@ export interface PageDoc {
   seoDescription: string | null;
 }
 
+/** Raw shape of the `siteSettings` singleton. Everything is nullable: the
+ *  resolver in src/lib/settings.server.ts decides what each missing field means. */
+export interface SiteSettingsDoc {
+  orderingEnabled: boolean | null;
+  minLeadTimeDays: number | null;
+  deliveryBlackoutDates: string[] | null;
+  deliveryZones:
+    | { name: string | null; fee: number | null; zips: string[] | null }[]
+    | null;
+  unknownZipBehavior: string | null;
+  fallbackFee: number | null;
+  phone: string | null;
+  email: string | null;
+  announcement: string | null;
+}
+
 export type { SanityImageSource };

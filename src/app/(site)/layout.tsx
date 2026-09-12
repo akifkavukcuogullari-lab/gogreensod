@@ -1,3 +1,4 @@
+import { CartHydrator } from "@/components/cart/CartHydrator";
 import { Footer } from "@/components/site/Footer";
 import { Nav } from "@/components/site/Nav";
 import { RevealObserver } from "@/components/ui/Reveal";
@@ -17,6 +18,7 @@ export default function SiteLayout({
       <main id="main">{children}</main>
       <Footer />
       <RevealObserver />
+      <CartHydrator />
     </>
   );
 }

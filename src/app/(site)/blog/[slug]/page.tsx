@@ -132,7 +132,7 @@ export default async function PostPage({ params }: Params) {
           <aside className="border-line bg-surface-2 mt-16 rounded-[var(--radius-md)] border p-[clamp(24px,3.5vw,40px)]">
             <h2 className="text-[1.25rem]">Ready to order?</h2>
             <p className="text-muted mt-3 max-w-[44ch]">
-              {`Four grasses, ${BUSINESS.policy.minPallets} pallet minimum, delivered across Metro Atlanta between ${BUSINESS.deliveryWindow}.`}
+              {`Four grasses, ${BUSINESS.policy.minPallets} pallet minimum, delivered across Metro Atlanta from ${BUSINESS.deliveryWindow}.`}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <ButtonLink href="/sod-calculator">Estimate my order</ButtonLink>

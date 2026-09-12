@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils/cn";
+import { AddToCart } from "@/components/cart/AddToCart";
 import { centsToDollars } from "@/lib/pricing";
 import type { Variety, VarietyKey } from "@/lib/catalog";
 
@@ -97,9 +98,11 @@ export function VarietyTabs({ varieties }: { varieties: readonly Variety[] }) {
               <Spec label={v.highlight.label} value={v.highlight.value} />
             </dl>
 
+            <AddToCart className="mt-8" varietyKey={v.key} name={v.name} />
+
             <Link
               href={`/varieties/${v.slug}`}
-              className="text-accent mt-8 inline-block text-[0.95rem] font-semibold hover:underline"
+              className="text-accent mt-4 inline-block text-[0.95rem] font-semibold hover:underline"
             >
               More on {v.name} &rarr;
             </Link>

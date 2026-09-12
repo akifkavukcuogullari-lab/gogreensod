@@ -56,9 +56,17 @@ export const publicEnv = publicSchema.parse({
  * ------------------------------------------------------------------ */
 
 const serverSchema = z.object({
-  STRIPE_SECRET_KEY: z.string().startsWith("sk_"),
-  STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_"),
+  // Secret (sk_) or restricted (rk_) key. Production should use a restricted
+  // key; rejecting rk_ here would silently keep checkout switched off.
+  STRIPE_SECRET_KEY: z
+    .string()
+    .regex(/^(sk|rk)_(test|live)_/, "Use a Stripe secret (sk_) or restricted (rk_) key"),
+  // Optional here so checkout works before a webhook endpoint exists; the
+  // webhook route refuses every request until it is set.
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_").optional(),
   SANITY_API_READ_TOKEN: z.string().min(1).optional(),
+  // Editor token used only by the Stripe webhook to write order documents.
+  SANITY_API_WRITE_TOKEN: z.string().min(1).optional(),
   SANITY_REVALIDATE_SECRET: z.string().min(16).optional(),
   RESEND_API_KEY: z.string().startsWith("re_").optional(),
   ORDER_NOTIFICATION_EMAIL: z.string().email().optional(),
@@ -87,10 +95,7 @@ export function serverEnv(): ServerEnv {
 
 /** True once Stripe is configured — lets routes 503 cleanly instead of crashing. */
 export function isStripeConfigured(): boolean {
-  return (
-    typeof process.env.STRIPE_SECRET_KEY === "string" &&
-    process.env.STRIPE_SECRET_KEY.startsWith("sk_")
-  );
+  return /^(sk|rk)_(test|live)_/.test(process.env.STRIPE_SECRET_KEY ?? "");
 }
 
 export function isSanityConfigured(): boolean {
@@ -98,4 +103,4 @@ export function isSanityConfigured(): boolean {
 }
 
 export const isLiveStripe = (): boolean =>
-  process.env.STRIPE_SECRET_KEY?.startsWith("sk_live_") ?? false;
+  /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY ?? "");

@@ -109,7 +109,7 @@ export default async function AtlantaSodGuidePage() {
     {
       id: "delivery",
       question: "Does Go Green Sod deliver sod in Atlanta?",
-      answer: `Yes, across Metro Atlanta, and delivery only with no pickup at the farm. Sod is cut the day it ships and delivered overnight between ${BUSINESS.deliveryWindow}, and delivery is quoted separately by address.`,
+      answer: `Yes, across Metro Atlanta, and delivery only with no pickup at the farm. Sod is cut the day it ships and delivered overnight from ${BUSINESS.deliveryWindow}, and delivery is quoted separately by address.`,
     },
   ];
 

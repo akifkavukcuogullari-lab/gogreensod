@@ -66,7 +66,7 @@ export default async function ContractorPage() {
     {
       id: "standing-deliveries",
       question: "Can a landscaper set up repeat sod deliveries?",
-      answer: `Yes, by phone on ${BUSINESS.phone}. Deliveries run overnight between ${BUSINESS.deliveryWindow}, so pallets are on the job site before a crew arrives in the morning.`,
+      answer: `Yes, by phone on ${BUSINESS.phone}. Deliveries run overnight from ${BUSINESS.deliveryWindow}, so pallets are on the job site before a crew arrives in the morning.`,
     },
     {
       id: "which-grass-contractors",

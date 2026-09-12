@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useId, useState } from "react";
 
+import { useCartHydrated } from "@/components/cart/CartHydrator";
 import { Button } from "@/components/ui/Button";
 import {
   MIN_PALLETS_TOTAL,
@@ -16,6 +18,7 @@ import {
   isBelowMinimum,
   parseArea,
 } from "@/lib/pricing";
+import { useCart } from "@/lib/cart/store";
 import { cn } from "@/lib/utils/cn";
 
 interface Estimate {
@@ -38,9 +41,13 @@ export function Estimator({ varieties }: { varieties: readonly Variety[] }) {
   const [key, setKey] = useState<VarietyKey>(varieties[0].key);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Estimate | null>(null);
+  const hydrated = useCartHydrated();
+  const addToCart = useCart((s) => s.add);
+  const [added, setAdded] = useState(false);
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setAdded(false);
 
     const parsed = parseArea(area);
     if (!parsed.ok) {
@@ -166,9 +173,31 @@ export function Estimator({ varieties }: { varieties: readonly Variety[] }) {
               />
             </dl>
 
-            <p className="text-muted mt-6 text-[0.82rem]">
-              Delivery is quoted separately by address. Call to confirm before
-              you book.
+            <div className="mt-7 flex flex-wrap items-center gap-4">
+              <Button
+                type="button"
+                disabled={!hydrated || added}
+                className="disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={() => {
+                  addToCart(result.variety.key, result.pallets);
+                  setAdded(true);
+                }}
+              >
+                {added
+                  ? "Added to cart"
+                  : `Add ${result.pallets} pallets to cart`}
+              </Button>
+              {added ? (
+                <Link
+                  href="/cart"
+                  className="text-accent text-[0.95rem] font-semibold underline underline-offset-2"
+                >
+                  View cart
+                </Link>
+              ) : null}
+            </div>
+            <p className="text-muted mt-5 text-[0.82rem]">
+              Delivery is priced by ZIP code in your cart.
             </p>
           </>
         )}
