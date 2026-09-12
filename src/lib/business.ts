@@ -68,36 +68,34 @@ export const BUSINESS = {
 } as const;
 
 /** The domain this site is canonically served from. */
-const CANONICAL_URL = "https://gogreensod.com";
+export const CANONICAL_URL = "https://gogreensod.com";
+
+/** Hosts that count as the real site. Everything else is a staging surface. */
+export const CANONICAL_HOSTS = ["gogreensod.com", "www.gogreensod.com"];
 
 /**
  * Resolves the site's base URL.
  *
+ * The canonical domain wins unless explicitly overridden. Vercel's injected
+ * deployment hostnames are deliberately NOT used: canonical tags, the sitemap
+ * and /llms.txt must always name gogreensod.com, so a preview deployment can
+ * never get itself indexed as the real site or tell a model the wrong address.
+ *
  * Next.js inlines `process.env.NEXT_PUBLIC_*` at build time and substitutes an
- * EMPTY STRING when the variable is unset — not `undefined`. So `??` never
- * fires and `new URL("")` throws ERR_INVALID_URL, which is exactly how the
- * first Vercel build failed. Treat blank and malformed values as missing.
+ * EMPTY STRING when a variable is unset — not `undefined` — so `??` is not
+ * enough. Blank and malformed values are both treated as missing.
  */
 function resolveSiteUrl(): string {
-  const candidates = [
-    process.env.NEXT_PUBLIC_SITE_URL,
-    // Vercel exposes these to Next.js builds; useful on preview deployments
-    // where no explicit site URL is configured.
-    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
-    process.env.NEXT_PUBLIC_VERCEL_URL,
-  ];
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
-  for (const raw of candidates) {
-    const value = raw?.trim();
-    if (!value) continue;
-
-    // The Vercel vars are bare hostnames, with no scheme.
-    const withScheme = /^https?:\/\//.test(value) ? value : `https://${value}`;
-
+  if (explicit) {
+    const withScheme = /^https?:\/\//.test(explicit)
+      ? explicit
+      : `https://${explicit}`;
     try {
       return new URL(withScheme).origin;
     } catch {
-      // Malformed — fall through to the next candidate.
+      // Malformed — fall through to the canonical domain.
     }
   }
 
