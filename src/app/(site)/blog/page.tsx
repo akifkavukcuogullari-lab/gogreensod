@@ -46,6 +46,7 @@ export default async function BlogPage() {
 
       <Section>
         <SectionHead
+          as="h1"
           title="Notes from the field"
           lede="What we tell people on the phone, written down. Choosing a grass, getting it in the ground, and keeping it alive through a Georgia summer."
         />

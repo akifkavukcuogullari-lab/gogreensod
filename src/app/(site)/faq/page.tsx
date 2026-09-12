@@ -28,6 +28,7 @@ export default function FaqPage() {
 
       <Section>
         <SectionHead
+          as="h1"
           title="Before you order"
           lede="The things people ask most. If yours is not here, call or text and we will answer it straight."
           narrow="14ch"

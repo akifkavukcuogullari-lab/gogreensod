@@ -31,6 +31,7 @@ export default async function VarietiesPage() {
 
       <Section>
         <SectionHead
+          as="h1"
           title="Four grasses. Pick for your light."
           lede="We grow four turf varieties. How much sun the spot gets is the decision that matters — everything else follows from it."
         />

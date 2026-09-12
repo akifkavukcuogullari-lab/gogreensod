@@ -3,7 +3,12 @@
 import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { MIN_PALLETS_TOTAL, type Variety, type VarietyKey } from "@/lib/catalog";
+import {
+  MIN_PALLETS_TOTAL,
+  SQ_FT_PER_PALLET,
+  type Variety,
+  type VarietyKey,
+} from "@/lib/catalog";
 import {
   billablePalletsForSqFt,
   centsToDollars,
@@ -82,7 +87,7 @@ export function Estimator({ varieties }: { varieties: readonly Variety[] }) {
             )}
           />
           <p className="text-muted mt-2 text-[0.8rem]">
-            Square feet. One pallet covers 450 sq ft.
+            {`Square feet. One pallet covers ${SQ_FT_PER_PALLET} sq ft.`}
           </p>
           {error ? (
             <p id={`${areaId}-err`} role="alert" className="text-danger mt-2 text-[0.85rem]">

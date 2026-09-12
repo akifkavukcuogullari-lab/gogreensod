@@ -8,12 +8,22 @@ import { Accordion } from "@/components/ui/Accordion";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { Section, SectionHead } from "@/components/ui/Section";
 import { VarietyTabs } from "@/components/varieties/VarietyTabs";
-import { FALLBACK_VARIETIES, sortVarieties } from "@/lib/catalog";
+import { getVarieties } from "@/lib/catalog.server";
 import { FAQ } from "@/lib/faq";
 import { faqJsonLd, localBusinessJsonLd } from "@/lib/seo/jsonld";
 
-export default function HomePage() {
-  const varieties = sortVarieties(FALLBACK_VARIETIES);
+/**
+ * Prices come from the resolver, never from the compiled fallback.
+ *
+ * This page previously read `FALLBACK_VARIETIES` directly. That made the
+ * homepage the one place a price edited in Studio never reached — the variety
+ * tabs, the estimator AND `localBusinessJsonLd` all kept serving the compiled
+ * price, so the structured data advertised a price the client had already
+ * changed. `getVarieties()` falls back to the same compiled data when Sanity is
+ * unreachable, so there is nothing to lose by going through it.
+ */
+export default async function HomePage() {
+  const varieties = await getVarieties();
 
   return (
     <>

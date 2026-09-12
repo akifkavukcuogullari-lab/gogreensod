@@ -56,7 +56,7 @@ export const FALLBACK_VARIETIES: readonly Variety[] = [
     blade: "Thin",
     highlight: { label: "Coverage", value: "450 sq ft" },
     description:
-      "The most shade tolerant turf we carry. Thin blade, carpet like once mature, and just as happy in full sun.",
+      "Zeon Zoysia is the most shade tolerant sod we grow, needing only three to four hours of sun a day. Thin bladed and carpet like once mature, though it is just as happy in full sun. Cut to order and delivered by the pallet across Metro Atlanta.",
     image: {
       src: "/img/v-zeon.jpg",
       alt: "Close view of fine bladed Zeon zoysia turf",
@@ -75,7 +75,7 @@ export const FALLBACK_VARIETIES: readonly Variety[] = [
     blade: "Thin",
     highlight: { label: "Holds up to", value: "Drought" },
     description:
-      "Our second most shade tolerant option. Thin blade, very drought tolerant, and low maintenance once it is established.",
+      "Emerald Zoysia is the second most shade tolerant sod we grow, happy on four to five hours of sun. Thin blade, very drought tolerant, and low maintenance once established. Sold by the 450 square foot pallet, delivered anywhere in Metro Atlanta.",
     image: {
       src: "/img/v-emerald.jpg",
       alt: "Close view of dense deep green Emerald zoysia turf",
@@ -96,7 +96,7 @@ export const FALLBACK_VARIETIES: readonly Variety[] = [
     // shade — a contradiction. Corrected to match the description.
     highlight: { label: "Tolerates", value: "Moderate shade" },
     description:
-      "One of the oldest zoysias around. Thicker blade than Emerald or Zeon, and it takes moderate shade far better than bermuda.",
+      "Meyers Zoysia is one of the oldest zoysia sods grown, and it asks for five to six hours of sun. The blade is thicker than Emerald or Zeon, and it takes moderate shade far better than any bermuda. Delivered fresh cut across Metro Atlanta.",
     image: {
       src: "/img/v-meyers.jpg",
       alt: "Close view of established Meyers zoysia turf",
@@ -115,7 +115,7 @@ export const FALLBACK_VARIETIES: readonly Variety[] = [
     blade: "Fine",
     highlight: { label: "Best in", value: "Full sun" },
     description:
-      "The most commonly used turf in Georgia and the one contractors ask for by name. Deep green hue, and it wants full sun all day.",
+      "Tifway 419 Bermuda is the most widely used turf in Georgia and the sod Atlanta contractors ask for by name. Fine blade, deep green hue, and it wants eight hours of sun a day. Delivered by the pallet, cut the same day it ships.",
     image: {
       src: "/img/v-bermuda.jpg",
       alt: "Close view of Tifway 419 bermuda turf in full sun",

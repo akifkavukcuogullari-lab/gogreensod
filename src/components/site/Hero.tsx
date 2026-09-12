@@ -22,8 +22,9 @@ export function Hero() {
               <em className="text-accent not-italic">Delivered by dawn.</em>
             </h1>
             <p className="rv rv-d1 text-muted mt-6 max-w-[46ch] text-[clamp(1rem,1.5vw,1.15rem)]">
-              Zoysia and bermuda cut the day it ships, loaded straight off the
-              harvester and rolling to your job site overnight.
+              Fresh cut zoysia and bermuda sod, delivered across Metro
+              Atlanta. Loaded straight off the harvester and rolling to your job
+              site overnight.
             </p>
             <div className="rv rv-d2 mt-9 flex flex-wrap gap-3">
               <ButtonLink href="/#estimate">Estimate my order</ButtonLink>
