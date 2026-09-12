@@ -87,6 +87,12 @@ variety.
 See `.env.example`. Nothing secret may carry a `NEXT_PUBLIC_` prefix — that
 inlines it into the JavaScript every visitor downloads.
 
+## Before going live
+
+See [LAUNCH.md](LAUNCH.md) — the pre-launch checklist. It covers what is
+blocked on the client, the Vercel and Sanity cutover steps, what to verify
+once the real domain resolves, and the known gaps to disclose in writing.
+
 ## Not yet built
 
 Cart, Stripe checkout, delivery-fee zones, transactional email, and the Sanity

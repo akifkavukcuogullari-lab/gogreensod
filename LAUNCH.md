@@ -1,0 +1,172 @@
+# Launch checklist — gogreensod.com
+
+Everything that must be true before DNS points at this site. Work top to
+bottom; the blockers gate the rest.
+
+**Status:** Release 1 (site + CMS + blog) is built and deployed to a preview
+host. Release 2 (cart + Stripe + email) is not built. The site is currently
+`noindex` on every host except gogreensod.com, so nothing is public yet.
+
+---
+
+## 0. Blocked on the client — chase these first
+
+Nothing below can finish without these, and they move slower than the code.
+
+- [ ] **Delivery fee table.** How does he charge — flat fee, by ZIP, by
+      mileage, or free over N pallets? Checkout cannot quote a total without
+      it. The schema is already built; he edits zones and ZIPs himself in
+      Studio → Site settings.
+- [ ] **Stripe account in HIS name.** His bank account, his tax reporting.
+      It cannot be created on his behalf. ~10 minutes on the phone with him.
+- [ ] **Is sod taxable in Georgia? Get the answer in writing.** If it is and
+      we are not collecting, he eats the liability on every order. This is a
+      legal exposure, not a code bug.
+- [ ] **DNS access** for gogreensod.com. Blocks both the domain cutover and
+      Resend's email verification.
+- [ ] **Street address** for LocalBusiness JSON-LD. Must match the Google
+      Business Profile byte for byte.
+- [ ] **Order minimum interpretation.** "Three pallet minimum" — total across
+      the cart, or three of each variety? Currently implemented as the cart
+      total. One function to flip: `meetsMinimum()` in `src/lib/pricing.ts`.
+- [ ] **Real farm photography.** The turf close-ups are open-license stock.
+      Stock grass on a sod farm's own site is a credibility problem and
+      possibly a licensing one. He drags replacements into the same Studio
+      documents; no code change.
+- [ ] **Google Business Profile** claimed and complete, with correct hours
+      and named service areas. Free, ten minutes, and the single highest
+      leverage action for being recommended by AI assistants.
+- [ ] **Confirm the order notification email address** (currently
+      gogreensod123@gmail.com) and a mobile number for order alerts.
+
+---
+
+## 1. Vercel
+
+- [ ] **Upgrade to Pro.** Vercel's Hobby plan is restricted to
+      non-commercial personal use; taking payments and being paid to build
+      the site both count as commercial. ~$20/month, the client's operating
+      cost. Required before the site takes a single order.
+- [ ] Confirm the project is connected to `akifkavukcuogullari-lab/gogreensod`
+      under **Settings → Git**. Pushes must auto-deploy.
+- [ ] Add domains **gogreensod.com** and **www.gogreensod.com**, and pick one
+      as primary (apex recommended, with www redirecting to it).
+- [ ] Point DNS at Vercel and wait for the certificate to issue.
+- [ ] **Do NOT set `NEXT_PUBLIC_SITE_URL`.** With it unset, canonical URLs,
+      the sitemap, JSON-LD and /llms.txt all resolve to gogreensod.com
+      automatically. It exists only as a deliberate override.
+- [ ] Environment variables (Production + Preview + Development):
+
+      NEXT_PUBLIC_SANITY_PROJECT_ID    ixnkx4fr
+      NEXT_PUBLIC_SANITY_DATASET       production
+      NEXT_PUBLIC_SANITY_API_VERSION   2026-06-01
+      SANITY_REVALIDATE_SECRET         (the value already in Vercel)
+
+- [ ] **Once Stripe exists:** exclude `/api/stripe/webhook` from Deployment
+      Protection, or Stripe gets a 401 before the handler ever runs.
+- [ ] **Once Stripe exists:** Production and Preview need SEPARATE Stripe
+      webhook endpoints with separate signing secrets. Preview uses test
+      keys, Production live.
+
+---
+
+## 2. Sanity
+
+CORS is already configured for gogreensod.com, www.gogreensod.com,
+localhost:3000 and the preview host. Nothing to do there.
+
+- [ ] **Repoint the revalidate webhook to the real domain.** Currently it must
+      target a host that resolves, so it points at the preview URL. At cutover
+      change it to `https://gogreensod.com/api/revalidate`.
+      **This is the one setting that does not self-correct** — if it is
+      forgotten, publishing silently stops going live within seconds and falls
+      back to the 60-second refresh.
+- [ ] Invite the client as **Administrator** (not Editor) so he is never
+      locked out of his own content if this working relationship ends.
+- [ ] Fill in **Site settings**: delivery zones, minimum lead time, blackout
+      dates, and leave `orderingEnabled` off until checkout is live.
+- [ ] Replace the four variety photos with real farm photography.
+- [ ] Publish at least 2–3 blog posts before launch so the Journal is not
+      empty on day one. Seed questions that customers actually ask:
+      *How much sod do I need for my yard?* ·
+      *Zoysia vs Bermuda in Georgia — which should I pick?* ·
+      *When is the best time to lay sod in Atlanta?* ·
+      *How do I water new sod?* · *Will zoysia grow in shade?*
+
+---
+
+## 3. Stripe — only once Release 2 is built
+
+- [ ] Live secret key set in Production only; test keys everywhere else.
+- [ ] Use a **restricted API key** in production, scoped to creating Checkout
+      Sessions and reading line items, so a leak cannot drain the balance.
+- [ ] Webhook endpoint created, signing secret stored, signature verified.
+- [ ] Refuse to enable live keys while the delivery zone table is empty —
+      `src/lib/env.ts` should assert this.
+- [ ] **Place one real order with a real card, then refund it.** Confirm the
+      money moves, both emails arrive, and the refund lands.
+- [ ] Confirm the 3-pallet minimum blocks checkout, and an out-of-area ZIP
+      returns the "call for a quote" message rather than a guessed fee.
+
+---
+
+## 4. Email — only once Release 2 is built
+
+- [ ] Verify the sending domain in Resend: **SPF + DKIM + DMARC**. Needs DNS,
+      so start it early.
+- [ ] Test with mail-tester; aim for 9+.
+- [ ] **Send a real order email to the client's Gmail and confirm it is not in
+      spam.** Order notifications silently landing in spam is the worst
+      possible failure — the site looks like it is working.
+- [ ] Have the client star the first real one so Gmail learns it.
+
+---
+
+## 5. Verify after the domain is live
+
+- [ ] `https://gogreensod.com` loads; `www` redirects to it.
+- [ ] **`noindex` is gone on the real domain** and still present on the
+      `.vercel.app` host. Check the `X-Robots-Tag` response header on both.
+- [ ] Canonical URLs, sitemap and /llms.txt all name gogreensod.com.
+- [ ] AI crawlers get 200 plus full HTML. Test with real user agents, not by
+      assumption — Vercel's firewall can block them before robots.txt is read:
+
+      curl -A "OAI-SearchBot/1.0" https://gogreensod.com/varieties -o /dev/null -w "%{http_code} %{size_download}\n"
+
+      Repeat for GPTBot, PerplexityBot, ClaudeBot, Googlebot, bingbot.
+- [ ] Google Rich Results Test passes for LocalBusiness, Product, FAQPage and
+      BlogPosting.
+- [ ] Lighthouse ≥95 on the home page and a blog post.
+- [ ] Submit the sitemap in Google Search Console.
+- [ ] Studio loads at /studio and the client can log in and publish.
+- [ ] Check the site on a real phone, not just a narrow browser window.
+
+---
+
+## 6. Tell the client in writing before launch
+
+Not optional. These are known gaps, and they are far cheaper to disclose now
+than to explain in week three.
+
+- [ ] **No delivery capacity control.** Nothing prevents 40 pallets being
+      booked for the same night across separate orders. This is the gap most
+      likely to hurt operationally. A `deliveryCapacity` document in Sanity is
+      the natural v1.1.
+- [ ] **No order list outside Stripe.** The Stripe Dashboard is the order
+      book. There is no admin page, no delivery calendar, and no customer
+      lookup by address.
+- [ ] **Stripe is not a CRM.** No notes on a customer, no follow-up
+      reminders, no tags, no segments.
+- [ ] **Repeat customers may create duplicate Stripe records** unless
+      checkout looks up the existing customer first.
+- [ ] The turf photos are stock until he reshoots them.
+
+---
+
+## 7. Day-one rollback
+
+- [ ] Keep the old host reachable until DNS has fully propagated.
+- [ ] Know how to revert: `git revert <sha> && git push` redeploys the
+      previous version in about a minute.
+- [ ] `orderingEnabled` in Site settings is the kill switch — the client can
+      stop taking online orders himself without calling anyone.
