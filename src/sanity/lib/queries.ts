@@ -61,3 +61,15 @@ export const siteSettingsQuery = defineQuery(`
     announcement
   }
 `);
+
+export const pagesQuery = defineQuery(`
+  *[_type == "page" && defined(key)] {
+    key,
+    title,
+    intro,
+    sections[]{heading, body},
+    faq[]{question, answer},
+    seoTitle,
+    seoDescription
+  }
+`);

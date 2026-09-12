@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { BUSINESS } from "@/lib/business";
-import { NAV_LINKS } from "@/lib/nav";
+import { FOOTER_LINKS, NAV_LINKS } from "@/lib/nav";
 
 import { Brand } from "./Brand";
 
@@ -26,7 +26,7 @@ export function Footer() {
               Explore
             </h2>
             <ul className="mt-5 space-y-3">
-              {NAV_LINKS.map((link) => (
+              {[...NAV_LINKS, ...FOOTER_LINKS].map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

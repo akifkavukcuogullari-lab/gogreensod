@@ -56,4 +56,16 @@ export interface FaqItemDoc {
   answer: string | null;
 }
 
+/** Raw shape of a `page` document. Every field is optional except the key:
+ *  the compiled entry in src/lib/pages.ts supplies anything missing. */
+export interface PageDoc {
+  key: string;
+  title: string | null;
+  intro: string | null;
+  sections: VarietySectionDoc[] | null;
+  faq: FaqItemDoc[] | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+}
+
 export type { SanityImageSource };

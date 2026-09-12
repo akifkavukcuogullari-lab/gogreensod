@@ -2,6 +2,7 @@ import { BUSINESS, SITE_URL } from "@/lib/business";
 import { MIN_PALLETS_TOTAL, SQ_FT_PER_PALLET } from "@/lib/catalog";
 import { getVarieties } from "@/lib/catalog.server";
 import { FAQ } from "@/lib/faq";
+import { PAGE_LIST } from "@/lib/pages";
 import { centsToDollars } from "@/lib/pricing";
 
 /**
@@ -68,6 +69,12 @@ foot lawn needs 6 pallets. Every order has a ${MIN_PALLETS_TOTAL} pallet minimum
 ## Service area
 
 ${BUSINESS.areaServed.join(", ")}.
+
+## Key pages
+
+${PAGE_LIST.map((page) => `- ${page.title} — ${SITE_URL}${page.path}`).join("\n")}
+- Every grass compared — ${SITE_URL}/varieties
+- Questions and policies — ${SITE_URL}/faq
 
 ## Frequently asked questions
 

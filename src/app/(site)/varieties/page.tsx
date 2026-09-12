@@ -80,7 +80,7 @@ export default async function VarietiesPage() {
         </div>
 
         <div className="mt-[clamp(48px,7vw,88px)] flex flex-wrap gap-3">
-          <ButtonLink href="/#estimate">Estimate my order</ButtonLink>
+          <ButtonLink href="/sod-calculator">Estimate my order</ButtonLink>
           <ButtonLink href={BUSINESS.phoneHref} variant="ghost">
             {`Call ${BUSINESS.phone}`}
           </ButtonLink>

@@ -135,7 +135,7 @@ export default async function PostPage({ params }: Params) {
               {`Four grasses, ${BUSINESS.policy.minPallets} pallet minimum, delivered across Metro Atlanta between ${BUSINESS.deliveryWindow}.`}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <ButtonLink href="/#estimate">Estimate my order</ButtonLink>
+              <ButtonLink href="/sod-calculator">Estimate my order</ButtonLink>
               <ButtonLink href={BUSINESS.phoneHref} variant="ghost">
                 {`Call ${BUSINESS.phone}`}
               </ButtonLink>

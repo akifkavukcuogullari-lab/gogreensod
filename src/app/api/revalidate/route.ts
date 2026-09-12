@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 
 import { CATALOG_TAG } from "@/lib/catalog.server";
+import { PAGES_TAG } from "@/lib/pages.server";
 import { POSTS_TAG, postTag } from "@/lib/blog.server";
 
 /**
@@ -15,7 +16,7 @@ import { POSTS_TAG, postTag } from "@/lib/blog.server";
  * Configure in sanity.io/manage → API → Webhooks:
  *   URL:     https://<site>/api/revalidate
  *   Trigger: create, update, delete
- *   Filter:  _type in ["post", "variety", "siteSettings", "category"]
+ *   Filter:  _type in ["post", "variety", "page", "siteSettings", "category"]
  *   Secret:  SANITY_REVALIDATE_SECRET
  */
 export const runtime = "nodejs";
@@ -30,6 +31,8 @@ function tagsFor(type: string, slug?: string): string[] {
       return [POSTS_TAG];
     case "variety":
       return [CATALOG_TAG];
+    case "page":
+      return [PAGES_TAG];
     case "siteSettings":
       return ["settings"];
     default:

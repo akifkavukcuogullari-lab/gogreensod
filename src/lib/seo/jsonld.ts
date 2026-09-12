@@ -141,3 +141,109 @@ export function breadcrumbJsonLd(trail: Array<{ name: string; path: string }>) {
 /** Human-readable price, shared by the UI and the /llms.txt brief. */
 export const priceLabel = (v: Variety) =>
   `${centsToDollars(v.pricePerPalletCents)} per pallet`;
+
+/**
+ * The price list as an ItemList of offers.
+ *
+ * A prices page is answering "what does a pallet of sod cost in Atlanta", and
+ * this is the machine-readable form of that answer. Prices come from the
+ * resolver, so they cannot disagree with the table rendered beside them.
+ */
+export function priceListJsonLd(varieties: readonly Variety[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Sod prices — ${BUSINESS.name}, Metro Atlanta`,
+    numberOfItems: varieties.length,
+    itemListElement: varieties.map((v, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: v.name,
+        url: `${SITE_URL}/varieties/${v.slug}`,
+        category: "Turf grass sod",
+        brand: { "@type": "Brand", name: BUSINESS.name },
+        offers: {
+          "@type": "Offer",
+          price: (v.pricePerPalletCents / 100).toFixed(2),
+          priceCurrency: "USD",
+          availability: "https://schema.org/InStock",
+          seller: { "@id": ORG_ID },
+          eligibleQuantity: {
+            "@type": "QuantitativeValue",
+            minValue: BUSINESS.policy.minPallets,
+            unitText: "pallet",
+          },
+        },
+      },
+    })),
+  };
+}
+
+/**
+ * Sod supply as a Service, for the contractor page.
+ *
+ * `Service` rather than `Product` because what a landscaper buys here is ongoing
+ * supply and scheduled delivery, not a single item. `provider` points at the
+ * same business node the home page declares, so the two are one entity rather
+ * than two businesses that happen to share a name.
+ */
+export function serviceJsonLd({
+  name,
+  description,
+  path,
+}: {
+  name: string;
+  description: string;
+  path: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name,
+    description,
+    url: `${SITE_URL}${path}`,
+    serviceType: "Sod supply and delivery",
+    provider: { "@id": ORG_ID },
+    areaServed: BUSINESS.areaServed.map((place) => ({
+      "@type": "Place",
+      name: place,
+    })),
+    // Delivery only, no pickup — say so in the markup, not just the copy.
+    availableChannel: {
+      "@type": "ServiceChannel",
+      serviceUrl: `${SITE_URL}${path}`,
+      servicePhone: BUSINESS.phoneE164,
+    },
+  };
+}
+
+/**
+ * A how-many-pallets calculator, described for machines.
+ *
+ * Deliberately NOT `HowTo`: Google deprecated HowTo rich results, and this is a
+ * tool rather than a set of steps. `WebApplication` states what the page is
+ * without claiming a rich result that no longer exists.
+ */
+export function calculatorJsonLd({
+  name,
+  description,
+  path,
+}: {
+  name: string;
+  description: string;
+  path: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name,
+    description,
+    url: `${SITE_URL}${path}`,
+    applicationCategory: "BusinessApplication",
+    browserRequirements: "Requires JavaScript",
+    isAccessibleForFree: true,
+    provider: { "@id": ORG_ID },
+  };
+}

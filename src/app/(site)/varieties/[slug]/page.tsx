@@ -3,12 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { PortableTextBody } from "@/components/blog/PortableTextBody";
-import { Accordion } from "@/components/ui/Accordion";
+import { LongFormFaq, LongFormSections } from "@/components/site/LongForm";
 import { ButtonLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { Section } from "@/components/ui/Section";
-import { TableOfContents } from "@/components/ui/TableOfContents";
 import { BUSINESS } from "@/lib/business";
 import { FALLBACK_VARIETIES } from "@/lib/catalog";
 import { getVarieties, getVarietyBySlug } from "@/lib/catalog.server";
@@ -62,7 +60,6 @@ export default async function VarietyPage({ params }: Params) {
   // One slugger for the whole page: section headings and any headings inside a
   // section body draw from the same pool, so two can never claim the same id.
   const slugFor = createSlugger();
-  const sectionIds = sections.map((section) => slugFor(section.heading));
 
   return (
     <>
@@ -127,7 +124,7 @@ export default async function VarietyPage({ params }: Params) {
             </dl>
 
             <div className="mt-10 flex flex-wrap gap-3">
-              <ButtonLink href="/#estimate">Estimate my order</ButtonLink>
+              <ButtonLink href="/sod-calculator">Estimate my order</ButtonLink>
               <ButtonLink href={BUSINESS.phoneHref} variant="ghost">
                 {`Call ${BUSINESS.phone}`}
               </ButtonLink>
@@ -140,51 +137,14 @@ export default async function VarietyPage({ params }: Params) {
         </div>
       </Section>
 
-      {sections.length ? (
-        <Section tinted>
-          <div className="grid gap-[clamp(32px,5vw,72px)] lg:grid-cols-[minmax(0,1fr)_260px] lg:items-start">
-            <div className="min-w-0">
-              {sections.map((section, i) => (
-                <section key={sectionIds[i]} className="rv">
-                  <h2
-                    id={sectionIds[i]}
-                    className="mt-14 mb-5 max-w-[34ch] scroll-mt-28 text-[clamp(1.5rem,3vw,2.1rem)] first:mt-0"
-                  >
-                    {section.heading}
-                  </h2>
-                  <PortableTextBody value={section.body} slug={slugFor} />
-                </section>
-              ))}
-            </div>
+      <LongFormSections
+        tinted
+        sections={sections}
+        slugFor={slugFor}
+        tocTitle={`About ${variety.name}`}
+      />
 
-            <TableOfContents
-              className="rv lg:sticky lg:top-28"
-              title={`About ${variety.name}`}
-              entries={sections.map((section, i) => ({
-                id: sectionIds[i],
-                text: section.heading,
-                level: 2 as const,
-              }))}
-            />
-          </div>
-        </Section>
-      ) : null}
-
-      {faq.length ? (
-        <Section>
-          <div className="grid gap-[clamp(32px,5vw,72px)] lg:grid-cols-[.8fr_1.2fr]">
-            <h2
-              className="text-[clamp(2.1rem,5.2vw,3rem)]"
-              style={{ maxWidth: "14ch" }}
-            >
-              {`Questions about ${variety.name}`}
-            </h2>
-            <div className="rv">
-              <Accordion entries={faq} defaultOpenId={faq[0].id} />
-            </div>
-          </div>
-        </Section>
-      ) : null}
+      <LongFormFaq faq={faq} heading={`Questions about ${variety.name}`} />
 
       <Section tinted>
         <h2 className="text-[clamp(1.6rem,3vw,2.2rem)]">Other varieties</h2>

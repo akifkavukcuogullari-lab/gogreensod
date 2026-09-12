@@ -3,6 +3,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/business";
 import { getPosts } from "@/lib/blog.server";
 import { getVarieties } from "@/lib/catalog.server";
+import { PAGE_LIST } from "@/lib/pages";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [varieties, posts] = await Promise.all([getVarieties(), getPosts()]);
@@ -18,6 +19,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     ...varieties.map((v) => ({
       url: `${SITE_URL}/varieties/${v.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+    // Editorial pages. Driven off PAGE_LIST so adding a route to src/lib/pages.ts
+    // cannot leave it out of the sitemap.
+    ...PAGE_LIST.map((page) => ({
+      url: `${SITE_URL}${page.path}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.8,
