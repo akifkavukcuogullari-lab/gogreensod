@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { JsonLd } from "@/components/ui/JsonLd";
 import { Section, SectionHead } from "@/components/ui/Section";
+import { VarietyTable } from "@/components/varieties/VarietyTable";
 import { ButtonLink } from "@/components/ui/Button";
 import { getVarieties } from "@/lib/catalog.server";
 import { BUSINESS } from "@/lib/business";
@@ -36,51 +37,11 @@ export default async function VarietiesPage() {
           lede="We grow four turf varieties. How much sun the spot gets is the decision that matters — everything else follows from it."
         />
 
-        {/* A real table: the most quotable asset on the site, and the shape
-            search engines and AI assistants extract most reliably. */}
-        <div className="rv -mx-[var(--pad)] overflow-x-auto px-[var(--pad)]">
-          <table className="w-full min-w-[620px] border-collapse text-left">
-            <caption className="sr-only">
-              Go Green Sod turf varieties compared by sun requirement, blade
-              type, coverage and price per pallet
-            </caption>
-            <thead>
-              <tr className="border-line border-b">
-                {["Variety", "Sun needed", "Blade", "Coverage", "Per pallet"].map(
-                  (h) => (
-                    <th
-                      key={h}
-                      scope="col"
-                      className="text-muted py-4 pr-6 text-[0.68rem] font-semibold tracking-[.16em] uppercase"
-                    >
-                      {h}
-                    </th>
-                  ),
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {varieties.map((v) => (
-                <tr key={v.key} className="border-line-soft border-b">
-                  <th scope="row" className="py-5 pr-6 font-normal">
-                    <Link
-                      href={`/varieties/${v.slug}`}
-                      className="font-[family-name:var(--font-display)] text-[1.05rem] font-bold hover:underline"
-                    >
-                      {v.name}
-                    </Link>
-                  </th>
-                  <td className="text-muted py-5 pr-6">{v.sunNeeded}</td>
-                  <td className="text-muted py-5 pr-6">{v.blade}</td>
-                  <td className="text-muted py-5 pr-6">{`${v.sqFtPerPallet} sq ft`}</td>
-                  <td className="text-accent py-5 pr-6 font-semibold tabular-nums">
-                    {centsToDollars(v.pricePerPalletCents)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <VarietyTable
+          className="rv"
+          varieties={varieties}
+          caption="Go Green Sod turf varieties compared by sun requirement, blade type, coverage and price per pallet"
+        />
 
         <p className="text-muted mt-6 text-[0.85rem]">
           {`Every order has a ${BUSINESS.policy.minPallets} pallet minimum. Delivery only, quoted separately by address.`}

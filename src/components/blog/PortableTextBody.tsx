@@ -5,22 +5,61 @@ import {
 } from "@portabletext/react";
 
 import { urlForImage } from "@/sanity/lib/image";
+import { createSlugger } from "@/lib/utils/slugify";
 import type { SanityImage as SanityImageType } from "@/sanity/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 
-const components: PortableTextComponents = {
+/** Plain text of a block, for deriving a heading's anchor id. */
+function blockText(value: unknown): string {
+  const children = (value as { children?: { text?: string }[] })?.children;
+  return (children ?? []).map((c) => c?.text ?? "").join("");
+}
+
+/**
+ * Headings in document order, with the ids `PortableTextBody` will render.
+ *
+ * Both this and the renderer walk the h2/h3 blocks in the same order through an
+ * identical slugger, so a table of contents built from this always links to
+ * anchors that exist.
+ */
+export function extractHeadings(
+  value: PortableTextBlock[],
+): { id: string; text: string; level: 2 | 3 }[] {
+  const slug = createSlugger();
+
+  return (value ?? []).flatMap((block) => {
+    const style = (block as { style?: string }).style;
+    if (style !== "h2" && style !== "h3") return [];
+    const text = blockText(block);
+    if (!text.trim()) return [];
+    return [{ id: slug(text), text, level: style === "h2" ? 2 : 3 } as const];
+  });
+}
+
+/**
+ * Built per document rather than shared at module scope, because the heading
+ * slugger has to be able to disambiguate repeated headings within one body.
+ */
+function buildComponents(slug: (text: string) => string): PortableTextComponents {
+  return {
   block: {
     normal: ({ children }) => (
       <p className="text-bone/85 mb-6 max-w-[68ch] leading-[1.75]">{children}</p>
     ),
-    h2: ({ children }) => (
-      <h2 className="mt-14 mb-5 max-w-[34ch] text-[clamp(1.5rem,3vw,2.1rem)]">
+    h2: ({ children, value }) => (
+      <h2
+        id={slug(blockText(value))}
+        className="mt-14 mb-5 max-w-[34ch] scroll-mt-28 text-[clamp(1.5rem,3vw,2.1rem)]"
+      >
         {children}
       </h2>
     ),
-    h3: ({ children }) => (
-      <h3 className="mt-10 mb-4 max-w-[40ch] text-[clamp(1.2rem,2.2vw,1.5rem)]">
+    h3: ({ children, value }) => (
+      <h3
+        id={slug(blockText(value))}
+        className="mt-10 mb-4 max-w-[40ch] scroll-mt-28 text-[clamp(1.2rem,2.2vw,1.5rem)]"
+      >
         {children}
       </h3>
     ),
@@ -95,8 +134,11 @@ const components: PortableTextComponents = {
       );
     },
   },
-};
+  };
+}
 
 export function PortableTextBody({ value }: { value: PortableTextBlock[] }) {
-  return <PortableText value={value} components={components} />;
+  return (
+    <PortableText value={value} components={buildComponents(createSlugger())} />
+  );
 }
